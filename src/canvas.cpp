@@ -23,27 +23,12 @@ using namespace std;
 
 Lab5Canvas::Lab5Canvas(QWidget *parent) : QGLWidget(parent), m_fps(30.0f)
 {
-    //You may want to add code here
-    m_renderNormals = false;
-    m_camera = new LabCamera();
+    m_camera = new Camera();
     m_camera->eye.x = 0.0f, m_camera->eye.y = 20.f, m_camera->eye.z = 10.0f;
     m_camera->center.x = 0.0f, m_camera->center.y = 0.0f, m_camera->center.z = 0.0f;
     m_camera->up.x = 0.0f, m_camera->up.y = 1.0f, m_camera->up.z = 0.0f;
     m_camera->angle = 45.0f, m_camera->near = 1.0f, m_camera->far = 1000.0f;
 
-    // Determines how much each vertex gets perturbed. The larger the value, the less pertubration will occur per recursive value
-    m_decay = 2;
-
-    // The number of levels of recursion your terrain uses (can be considered the level of detail of your terrain)
-    m_depth = 8;
-
-    // The roughness of your terrain. Higher roughnesses entail taller mountains and deeper valleys. Lower values entail small hills and shallow valleys
-    m_roughness = 6;
-
-    // Seed a random number, your terrain will change based on what number you seed
-    srand(0);
-
-    // Do not change below here
     QObject::connect(this, SIGNAL(_mouseDrag(QMouseEvent*)), this, SLOT(mouseDragEvent(QMouseEvent*)));
     setAutoBufferSwap(false);
     setFocusPolicy(Qt::StrongFocus);
@@ -51,17 +36,6 @@ Lab5Canvas::Lab5Canvas(QWidget *parent) : QGLWidget(parent), m_fps(30.0f)
     connect(m_timer, SIGNAL(timeout()), this, SLOT(redraw()));
     m_timer->start(1000.0f / m_fps);
 
-    // Imagining your terrain as a square grid of points, gridLength is the number of elements on one side, or the length of a side of the grid
-    m_gridLength = (1 << m_depth)+1;
-
-    // Knowing the number of elements on a side gives us the total number of elements in the grid
-    int terrain_array_size = m_gridLength * m_gridLength;
-
-    // Represents all of our vertices. Picture this as a grid
-    m_terrain = new Vector3[terrain_array_size];
-
-    // Represents all the normals, one per each vertex
-    m_normalMap = new Vector3[terrain_array_size];
 }
 
 // Destructor
@@ -78,21 +52,6 @@ Lab5Canvas::~Lab5Canvas()
         delete m_camera;
         m_camera = 0;
     }
-
-    delete[] m_terrain;
-    delete[] m_normalMap;
-}
-
-// You will only need to deal with the next 3 (maybe 4) methods
-
-/**
- * You need to fill this in.
- *
- * Computes the normal vector of each terrain vertex and stores it in the corresponding vertex.
- */
-void Lab5Canvas::computeNormals()
-{
-
 }
 
 /**
@@ -108,8 +67,11 @@ void Lab5Canvas::paintGL()
     // Push a new matrix onto the stack for modelling transformations
     glPushMatrix();
 
-    //draw normals
-    drawNormals();
+    // test the camera interaction
+    glColor3f(1.0, 0.0, 0.0);
+    GLUquadricObj *quadric = gluNewQuadric();
+    gluCylinder(quadric, 1.0, 0.0, 2.0, 20, 20);
+
     // Discard the modelling transformations (leaving only camera settings)
     glPopMatrix();
     // Force OpenGL to perform all pending operations -- usually a good idea to call this
@@ -118,21 +80,6 @@ void Lab5Canvas::paintGL()
     swapBuffers();
 }
 
-
-/****************************************************************************************************************/
-/**********************************DO NOT MODIFY ANY OF THE FOLLOWING CODE***************************************/
-/****************************************************************************************************************/
-
-/**
- * Draws a line at each vertex showing the direction of that vertex's normal. You may find
- * this to be a useful tool if you're having trouble getting the lighting to look right.
- * By default, this function is called in paintGL(), but only renders anything if
- * m_renderNormals is true. You do not need to modify this function.
- */
-void Lab5Canvas::drawNormals()
-{
-
-}
 
 /** Sets the initial values of OpenGL state variables used by this lab */
 void Lab5Canvas::initializeGL()
@@ -169,8 +116,6 @@ void Lab5Canvas::initializeGL()
     // Enable texturing - feel free to substitue with your own image
     glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    computeNormals();
 }
 
 /** Updates the current OpenGL state to avoid object distortion when the window is resized. */
@@ -207,22 +152,48 @@ void Lab5Canvas::updateCamera()
 
 void Lab5Canvas::mousePressEvent(QMouseEvent *event)
 {
-
+    if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton)
+        m_lastMousePos.x = event->x(); m_lastMousePos.y = event->y();
 }
 
 void Lab5Canvas::mouseMoveEvent(QMouseEvent *event)
 {
-
+    if (event->buttons() & Qt::LeftButton || event->buttons() & Qt::RightButton)
+    {
+        emit _mouseDrag(event);
+        m_lastMousePos.x = event->x(); m_lastMousePos.y = event->y();
+    }
 }
 
 void Lab5Canvas::mouseDragEvent(QMouseEvent *event)
 {
+    if (event->buttons() & Qt::RightButton || event->buttons() & Qt::LeftButton)
+    {
+        float dx = event->x() - m_lastMousePos.x,
+        dy = event->y() - m_lastMousePos.y;
 
+        double x = m_camera->eye.x, y = m_camera->eye.y, z = m_camera->eye.z,
+        r = sqrt(m_camera->eye.x * m_camera->eye.x +
+                 m_camera->eye.y * m_camera->eye.y +
+                 m_camera->eye.z * m_camera->eye.z),
+        theta = acos(y / r) - dy * 0.01f,
+        phi = atan2(z, x) + dx * 0.01f;
+
+        if (theta > M_PI-.1) theta = M_PI - .1;
+        if (theta < .1) theta = .1;
+
+        m_camera->eye.x = r * sin(theta) * cos(phi);
+        m_camera->eye.y = r * cos(theta);
+        m_camera->eye.z = r * sin(theta) * sin(phi);
+
+        updateCamera();
+    }
 }
 
 void Lab5Canvas::keyPressEvent(QKeyEvent *event)
 {
-
+    if (event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_Q)
+        exit(0);
 }
 
 void Lab5Canvas::redraw()

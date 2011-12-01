@@ -20,8 +20,8 @@ SOURCES += src/mainwindow.cpp \
 HEADERS  += \
     src/mainwindow.h \
     src/canvas.h \
-    src/labcamera.h \
-    src/vector.h
+    src/vector.h \
+    src/camera.h
 
 FORMS    += src/mainwindow.ui
 
