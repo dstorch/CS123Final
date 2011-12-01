@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>[Lab05] Terrain</string>
+   <string>Navier-Stokes Fluid Simulator</string>
   </property>
   <widget class="Lab5Canvas" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
