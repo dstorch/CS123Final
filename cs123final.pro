@@ -1,8 +1,8 @@
-QT += core gui opengl
-
+QT += core \
+    gui \
+    opengl
 TARGET = cs123final
 TEMPLATE = app
-
 INCLUDEPATH += scene \
     lib \
     math \
@@ -11,7 +11,6 @@ DEPENDPATH += scene \
     lib \
     math \
     support
-
 HEADERS += scene/glwidget.h \
     lib/targa.h \
     lib/glm.h \
@@ -19,26 +18,26 @@ HEADERS += scene/glwidget.h \
     support/resourceloader.h \
     support/mainwindow.h \
     support/camera.h \
-    lib/targa.h
-
-SOURCES += \
-    scene/glwidget.cpp \
+    lib/targa.h \
+    scene/grasscluster.h \
+    math/matrix.h \
+    math/matrix.inl \
+    scene/grasspatch.h
+SOURCES += scene/glwidget.cpp \
     lib/targa.cpp \
     lib/glm.cpp \
     support/resourceloader.cpp \
     support/mainwindow.cpp \
     support/main.cpp \
-    support/camera.cpp
-
+    support/camera.cpp \
+    scene/grasscluster.cpp \
+    scene/grasspatch.cpp
 FORMS += mainwindow.ui \
     support/mainwindow.ui
-
-OTHER_FILES += \
-    shaders/refract.vert \
+OTHER_FILES += shaders/refract.vert \
     shaders/refract.frag \
     shaders/reflect.vert \
     shaders/reflect.frag \
     shaders/brightpass.frag \
     shaders/blur.frag
-
-RESOURCES +=
+RESOURCES += 

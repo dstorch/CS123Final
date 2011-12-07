@@ -10,6 +10,7 @@
 #include "camera.h"
 #include "vector.h"
 #include "resourceloader.h"
+#include "grasscluster.h"
 
 class QGLShaderProgram;
 class QGLFramebufferObject;

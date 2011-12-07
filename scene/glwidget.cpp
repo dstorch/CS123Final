@@ -114,12 +114,12 @@ void GLWidget::initializeResources()
 void GLWidget::loadCubeMap()
 {
     QList<QFile *> fileList;
-    fileList.append(new QFile("textures/astra/posx.jpg"));
-    fileList.append(new QFile("textures/astra/negx.jpg"));
-    fileList.append(new QFile("textures/astra/posy.jpg"));
-    fileList.append(new QFile("textures/astra/negy.jpg"));
-    fileList.append(new QFile("textures/astra/posz.jpg"));
-    fileList.append(new QFile("textures/astra/negz.jpg"));
+    fileList.append(new QFile("textures/sky/right.jpg"));
+    fileList.append(new QFile("textures/sky/left.jpg"));
+    fileList.append(new QFile("textures/sky/top.jpg"));
+    fileList.append(new QFile("textures/sky/top.jpg"));
+    fileList.append(new QFile("textures/sky/front.jpg"));
+    fileList.append(new QFile("textures/sky/back.jpg"));
     m_cubeMap = ResourceLoader::loadCubeMap(fileList);
 }
 
@@ -279,8 +279,12 @@ void GLWidget::renderScene() {
     // Enable culling (back) faces for rendering the dragon
     glEnable(GL_CULL_FACE);
 
+    GrassCluster cluster1 = GrassCluster(Vector3(0.0, 0.0, 3.0));
+    cluster1.draw();
+
     // Render the dragon with the refraction shader bound
-    glActiveTexture(GL_TEXTURE0);
+    // Get rid of dragon drawing code
+    /*glActiveTexture(GL_TEXTURE0);
     m_shaderPrograms["refract"]->bind();
     m_shaderPrograms["refract"]->setUniformValue("CubeMap", GL_TEXTURE0);
     glPushMatrix();
@@ -296,7 +300,7 @@ void GLWidget::renderScene() {
     glTranslatef(1.25f,0.f,0.f);
     glCallList(m_dragon.idx);
     glPopMatrix();
-    m_shaderPrograms["reflect"]->release();
+    m_shaderPrograms["reflect"]->release();*/
 
     // Disable culling, depth testing and cube maps
     glDisable(GL_CULL_FACE);
