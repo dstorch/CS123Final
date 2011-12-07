@@ -11,6 +11,7 @@
 #include "vector.h"
 #include "resourceloader.h"
 #include "grasscluster.h"
+#include "HeightMap.h"
 
 class QGLShaderProgram;
 class QGLFramebufferObject;
@@ -64,6 +65,8 @@ private:
     GLuint m_skybox; // skybox call list ID
     GLuint m_cubeMap; // cubeMap texture ID
     QFont m_font; // font for rendering text
+
+    HeightMap* m_map;
 
 };
 
