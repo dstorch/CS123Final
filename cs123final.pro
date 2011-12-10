@@ -22,7 +22,9 @@ HEADERS += scene/glwidget.h \
     scene/grasscluster.h \
     math/matrix.h \
     math/matrix.inl \
-    scene/grasspatch.h
+    scene/grasspatch.h \
+    scene/HeightMap.h \
+    scene/grassfield.h
 SOURCES += scene/glwidget.cpp \
     lib/targa.cpp \
     lib/glm.cpp \
@@ -31,7 +33,9 @@ SOURCES += scene/glwidget.cpp \
     support/main.cpp \
     support/camera.cpp \
     scene/grasscluster.cpp \
-    scene/grasspatch.cpp
+    scene/grasspatch.cpp \
+    scene/HeightMap.cpp \
+    scene/grassfield.cpp
 FORMS += mainwindow.ui \
     support/mainwindow.ui
 OTHER_FILES += shaders/refract.vert \

@@ -89,6 +89,21 @@ void HeightMap::addHill(int x, int z)
     }
 }
 
+int HeightMap::width()
+{
+    return m_cols;
+}
+
+int HeightMap::height()
+{
+    return m_rows;
+}
+
+float HeightMap::getFromHeightMap(int row, int col)
+{
+    return m_map[row][col];
+}
+
 void HeightMap::computeNormals()
 {
     // For each vertex in the 2D grid...
@@ -194,10 +209,11 @@ inline int HeightMap::getIndex(int row, int col)
 void HeightMap::draw()
 {
     glMatrixMode(GL_MODELVIEW);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Push a new matrix onto the stack for modelling transformations
     glPushMatrix();
+    glLoadIdentity();
 
     // @TODO [Lab5] Tesselate your terrain here.
 
@@ -207,22 +223,22 @@ void HeightMap::draw()
         for(int j=0; j<m_cols; j++)
         {
             glNormal3fv( m_normalMap[getIndex(i,j)]->xyz );
-//            glTexCoord2f((float)i/(float)m_gridLength, (float)j/(float)m_gridLength);
+            //            glTexCoord2f((float)i/(float)m_gridLength, (float)j/(float)m_gridLength);
             glVertex3fv(Vector3(j - m_rows/2, m_map[i][j], i - m_cols/2).xyz); // NoteToSelf : added a centering offset
-//            glTexCoord2f((float)(i+1)/(float)m_gridLength, (float)j/(float)m_gridLength);
+            //            glTexCoord2f((float)(i+1)/(float)m_gridLength, (float)j/(float)m_gridLength);
             glVertex3fv(Vector3(j - m_rows/2, m_map[i+1][j], i+1 - m_cols/2).xyz); // NoteToSelf : added a centering offset
         }
         glEnd();
     }
 
     //draw normals
-//    drawNormals();
+    //    drawNormals();
     // Discard the modelling transformations (leaving only camera settings)
     glPopMatrix();
     // Force OpenGL to perform all pending operations -- usually a good idea to call this
-//    glFlush();
-//    // Swap the buffers to show what we have just drawn onto the screen
-//    swapBuffers();
+    //    glFlush();
+    //    // Swap the buffers to show what we have just drawn onto the screen
+    //    swapBuffers();
 }
 
 //void HeightMap::drawNormals()

@@ -30,7 +30,7 @@ m_font("Deja Vu Sans Mono", 8, 4)
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
 
-    m_camera.center = Vector3(0.f, 0.f, 0.f);
+    m_camera.center = Vector3(0.f, 10.f, 0.f);
     m_camera.up = Vector3(0.f, 1.f, 0.f);
     m_camera.zoom = 3.5f;
     m_camera.theta = M_PI * 1.5f, m_camera.phi = 0.2f;
@@ -39,6 +39,9 @@ m_font("Deja Vu Sans Mono", 8, 4)
     m_map = new HeightMap(100, 100);
     m_map->generateMap();
     m_map->computeNormals();
+
+    m_field = GrassField(m_map);
+    m_field.makeField();
 
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(update()));
 }
@@ -72,7 +75,7 @@ void GLWidget::initializeGL()
     glDisable(GL_DITHER);
 
     glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    glShadeModel(GL_SMOOTH);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -108,6 +111,8 @@ void GLWidget::initializeResources()
 
     createFramebufferObjects(width(), height());
     cout << "Loaded framebuffer objects..." << endl;
+
+    m_grassTex = ResourceLoader::loadTexture(new QFile("textures/grass1.jpg"));
 
     cout << " --- Finish Loading Resources ---" << endl;
 }
@@ -283,9 +288,12 @@ void GLWidget::renderScene() {
     // Enable culling (back) faces for rendering the dragon
     glEnable(GL_CULL_FACE);
 
-    GrassCluster cluster1 = GrassCluster(Vector3(0.0, 0.0, 3.0));
-    cluster1.draw();
+    // draw terrain
     m_map->draw();
+
+    // draw grass on top of terrain
+    m_field.draw(m_grassTex);
+
 //    swapBuffers();
 
     // Render the dragon with the refraction shader bound

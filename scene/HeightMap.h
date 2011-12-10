@@ -21,6 +21,10 @@ public:
     void printMap();
     float getRand();
 
+    int width();
+    int height();
+    float getFromHeightMap(int row, int col);
+
     QList<Vector3*> getSurroundingVertices(const GridPoint &coordinate);
     void draw();
 //    void drawNormals();

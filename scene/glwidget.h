@@ -12,6 +12,7 @@
 #include "resourceloader.h"
 #include "grasscluster.h"
 #include "HeightMap.h"
+#include "grassfield.h"
 
 class QGLShaderProgram;
 class QGLFramebufferObject;
@@ -66,7 +67,10 @@ private:
     GLuint m_cubeMap; // cubeMap texture ID
     QFont m_font; // font for rendering text
 
+    GLuint m_grassTex; // grass texture ID
+
     HeightMap* m_map;
+    GrassField m_field;
 
 };
 
