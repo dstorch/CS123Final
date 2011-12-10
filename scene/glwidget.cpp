@@ -145,6 +145,9 @@ void GLWidget::createShaderPrograms()
                                                                    "shaders/refract.frag");
     m_shaderPrograms["brightpass"] = ResourceLoader::newFragShaderProgram(ctx, "shaders/brightpass.frag");
     m_shaderPrograms["blur"] = ResourceLoader::newFragShaderProgram(ctx, "shaders/blur.frag");
+
+    m_shaderPrograms["grass"] = ResourceLoader::newShaderProgram(ctx, "shaders/grass.vert",
+                                                                     "shaders/grass.frag");
 }
 
 /**
@@ -249,7 +252,7 @@ void GLWidget::paintGL()
 
     // TODO: Uncomment this section in step 2 of the lab
 
-    /*float scales[] = {4.f,8.f,16.f,32.f};
+    float scales[] = {4.f,8.f,16.f,32.f};
     for (int i = 0; i < 4; ++i)
     {
         // Render the blurred brightpass filter result to fbo 1
@@ -267,7 +270,7 @@ void GLWidget::paintGL()
         renderTexturedQuad(width * scales[i], height * scales[i], false);
         glDisable(GL_BLEND);
         glBindTexture(GL_TEXTURE_2D, 0);
-    }*/
+    }
 
 
     paintText();
@@ -295,9 +298,13 @@ void GLWidget::renderScene() {
     m_map->draw(m_soilTex);
 
     // draw grass on top of terrain
-    glEnable(GL_BLEND);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_grassTex);
+    glActiveTexture(GL_TEXTURE0);
+    m_shaderPrograms["grass"]->bind();
+    m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
     m_field.draw(m_grassTex);
-    glDisable(GL_BLEND);
+    m_shaderPrograms["grass"]->release();
 
     //    swapBuffers();
 
@@ -325,6 +332,7 @@ void GLWidget::renderScene() {
     glDisable(GL_CULL_FACE);
     glDisable(GL_DEPTH_TEST);
     glBindTexture(GL_TEXTURE_CUBE_MAP,0);
+    glBindTexture(GL_TEXTURE_2D,0);
     glDisable(GL_TEXTURE_CUBE_MAP);
 }
 
