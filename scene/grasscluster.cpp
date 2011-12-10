@@ -31,25 +31,25 @@ void GrassCluster::draw(int texID)
     // front
     //glNormal3f(0.0, 0.0, -1.0);
     glNormal3f(0.0, 1.0, 0.0);
-    glTexCoord2f(1.0, 0.5);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(1.0, 0.0, 0.0);
-    glTexCoord2f(1.0, 1.0);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(1.0, 3.0, 0.0);
-    glTexCoord2f(0.0, 1.0);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-1.0, 3.0, 0.0);
-    glTexCoord2f(0.0, 0.0);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(-1.0, 0.0, 0.0);
 
     // back
     //glNormal3f(0.0, 0.0, 1.0);
     glNormal3f(0.0, 1.0, 0.0);
-    glTexCoord2f(1.0, 0.0);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(-1.0, 0.0, 0.0);
-    glTexCoord2f(1.0, 1.0);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-1.0, 3.0, 0.0);
-    glTexCoord2f(0.0, 1.0);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(1.0, 3.0, 0.0);
-    glTexCoord2f(0.0, 0.0);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(1.0, 0.0, 0.0);
 
     float theta = M_PI / 3.0;
@@ -63,25 +63,25 @@ void GrassCluster::draw(int texID)
     // front
     //glNormal3f(xnormal, 0.0, znormal);
     glNormal3f(0.0, 1.0, 0.0);
-    glTexCoord2f(1.0, 0.0);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(x, 0.0, z);
-    glTexCoord2f(1.0, 1.0);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(x, 3.0, z);
-    glTexCoord2f(0.0, 1.0);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-x, 3.0, -z);
-    glTexCoord2f(0.0, 0.0);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(-x, 0.0, -z);
 
     // back
     //glNormal3f(-xnormal, 0.0, -znormal);
     glNormal3f(0.0, 1.0, 0.0);
-    glTexCoord2f(1.0, 0.0);
+    glTexCoord2f(0.0f, 1.0f);
     glVertex3f(-x, 0.0, -z);
-    glTexCoord2f(1.0, 1.0);
+    glTexCoord2f(0.0f, 0.0f);
     glVertex3f(-x, 3.0, -z);
-    glTexCoord2f(0.0, 1.0);
+    glTexCoord2f(1.0f, 0.0f);
     glVertex3f(x, 3.0, z);
-    glTexCoord2f(0.0, 0.0);
+    glTexCoord2f(1.0f, 1.0f);
     glVertex3f(x, 0.0, z);
 
     theta = 2.0 * (M_PI / 3.0);
@@ -95,25 +95,25 @@ void GrassCluster::draw(int texID)
     // front
     //glNormal3f(xnormal, 0.0, znormal);
     glNormal3f(0.0, 1.0, 0.0);
-    glTexCoord2f(1.0, 0.0);
-    glVertex3f(x, 0.0, z);
     glTexCoord2f(1.0, 1.0);
+    glVertex3f(x, 0.0, z);
+    glTexCoord2f(1.0, 0.0);
     glVertex3f(x, 3.0, z);
-    glTexCoord2f(0.0, 1.0);
-    glVertex3f(-x, 3.0, -z);
     glTexCoord2f(0.0, 0.0);
+    glVertex3f(-x, 3.0, -z);
+    glTexCoord2f(0.0, 1.0);
     glVertex3f(-x, 0.0, -z);
 
     // back
     //glNormal3f(-xnormal, 0.0, -znormal);
     glNormal3f(0.0, 1.0, 0.0);
-    glTexCoord2f(1.0, 0.0);
-    glVertex3f(-x, 0.0, -z);
-    glTexCoord2f(1.0, 1.0);
-    glVertex3f(-x, 3.0, -z);
     glTexCoord2f(0.0, 1.0);
-    glVertex3f(x, 3.0, z);
+    glVertex3f(-x, 0.0, -z);
     glTexCoord2f(0.0, 0.0);
+    glVertex3f(-x, 3.0, -z);
+    glTexCoord2f(1.0, 0.0);
+    glVertex3f(x, 3.0, z);
+    glTexCoord2f(1.0, 1.0);
     glVertex3f(x, 0.0, z);
 
     glPopMatrix();

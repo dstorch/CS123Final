@@ -68,6 +68,7 @@ private:
     QFont m_font; // font for rendering text
 
     GLuint m_grassTex; // grass texture ID
+    GLuint m_soilTex; // soil texture ID
 
     HeightMap* m_map;
     GrassField m_field;

@@ -97,6 +97,9 @@ void GLWidget::initializeResources()
     // by the video card.  But that's a pain to do so we're not going to.
     cout << "--- Loading Resources ---" << endl;
 
+    m_grassTex = ResourceLoader::loadTexture(QString("textures/grass2.jpg"));
+    m_soilTex = ResourceLoader::loadTexture(QString("textures/soil.jpg"));
+
     m_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
     cout << "Loaded dragon..." << endl;
 
@@ -111,8 +114,6 @@ void GLWidget::initializeResources()
 
     createFramebufferObjects(width(), height());
     cout << "Loaded framebuffer objects..." << endl;
-
-    m_grassTex = ResourceLoader::loadTexture(new QFile("textures/grass1.jpg"));
 
     cout << " --- Finish Loading Resources ---" << endl;
 }
@@ -248,7 +249,7 @@ void GLWidget::paintGL()
 
     // TODO: Uncomment this section in step 2 of the lab
 
-    float scales[] = {4.f,8.f,16.f,32.f};
+    /*float scales[] = {4.f,8.f,16.f,32.f};
     for (int i = 0; i < 4; ++i)
     {
         // Render the blurred brightpass filter result to fbo 1
@@ -266,7 +267,7 @@ void GLWidget::paintGL()
         renderTexturedQuad(width * scales[i], height * scales[i], false);
         glDisable(GL_BLEND);
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
+    }*/
 
 
     paintText();
@@ -288,13 +289,17 @@ void GLWidget::renderScene() {
     // Enable culling (back) faces for rendering the dragon
     glEnable(GL_CULL_FACE);
 
+    glDisable(GL_TEXTURE_CUBE_MAP);
+
     // draw terrain
-    m_map->draw();
+    m_map->draw(m_soilTex);
 
     // draw grass on top of terrain
+    glEnable(GL_BLEND);
     m_field.draw(m_grassTex);
+    glDisable(GL_BLEND);
 
-//    swapBuffers();
+    //    swapBuffers();
 
     // Render the dragon with the refraction shader bound
     // Get rid of dragon drawing code

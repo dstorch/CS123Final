@@ -21,9 +21,9 @@ void GrassField::makeField()
 {
     srand((unsigned)time(0));
 
-    for (int i = 0; i < m_heightmap->height() - 1; i += 2)
+    for (int i = 0; i < m_heightmap->height() - 1; i += PATCH_SIZE)
     {
-        for (int j = 0; j < m_heightmap->width() - 1; j += 2)
+        for (int j = 0; j < m_heightmap->width() - 1; j += PATCH_SIZE)
         {
             GrassPatch *patch = new GrassPatch(i, j, m_heightmap);
             patch->generateRandomClusters(CLUSTERS_PER_PATCH);

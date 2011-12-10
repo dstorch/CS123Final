@@ -26,7 +26,7 @@ public:
     float getFromHeightMap(int row, int col);
 
     QList<Vector3*> getSurroundingVertices(const GridPoint &coordinate);
-    void draw();
+    void draw(GLuint texID);
 //    void drawNormals();
     inline int getIndex(const GridPoint &c);
     inline int getIndex(int row, int column);

@@ -47,38 +47,45 @@ GLuint ResourceLoader::loadCubeMap(QList<QFile *> files)
     return id;
 }
 
-// load any texture
-GLuint ResourceLoader::loadTexture(QFile *file)
+/**
+ * Generates a new OpenGL texture and loads the image data from the file at the given path into
+ * the texture. Makes the new texture active and returns its unique texture ID.
+ */
+GLuint ResourceLoader::loadTexture(const QString &filename)
 {
-    // Generate an ID
-    GLuint id;
+    // Make sure the image file exists
+    QFile file(filename);
+    if (!file.exists())
+        return -1;
+
+    // Load the file into memory
+    QImage image;
+    image.load(file.fileName());
+    image = image.mirrored(false, true);
+    QImage texture = QGLWidget::convertToGLFormat(image);
+
+    // Generate a new OpenGL texture ID to put our image into
+    GLuint id = 0;
     glGenTextures(1, &id);
 
-    // Bind the texture
+    // Make the texture we just created the new active texture
     glBindTexture(GL_TEXTURE_2D, id);
 
-    QImage image, texture;
-    image.load(file->fileName());
-    image = image.mirrored(false, true);
-    texture = QGLWidget::convertToGLFormat(image);
-    texture = texture.scaledToWidth(1024, Qt::SmoothTransformation);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, texture.width(), texture.height(), 0, GL_RGBA,GL_UNSIGNED_BYTE, texture.bits());
-    //gluBuild2DMipmaps(GL_TEXTURE_2D, 3, texture.width(), texture.height(), GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
+    // Copy the image data into the OpenGL texture
+    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, texture.width(), texture.height(), GL_RGBA, GL_UNSIGNED_BYTE, texture.bits());
 
-    // Set filter when pixel occupies more than one texture element
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    // Set filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // Set coordinate wrapping options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-    // Unbind the texture
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return id;
 }
-
 /**
     Loads an OBJ models from a file
   **/

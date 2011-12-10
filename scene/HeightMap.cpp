@@ -206,7 +206,7 @@ inline int HeightMap::getIndex(int row, int col)
     return row * m_cols + col;
 }
 
-void HeightMap::draw()
+void HeightMap::draw(GLuint texID)
 {
     glMatrixMode(GL_MODELVIEW);
     //    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -214,6 +214,8 @@ void HeightMap::draw()
     // Push a new matrix onto the stack for modelling transformations
     glPushMatrix();
     glLoadIdentity();
+
+    glBindTexture(GL_TEXTURE_2D, texID);
 
     // @TODO [Lab5] Tesselate your terrain here.
 
@@ -223,9 +225,9 @@ void HeightMap::draw()
         for(int j=0; j<m_cols; j++)
         {
             glNormal3fv( m_normalMap[getIndex(i,j)]->xyz );
-            //            glTexCoord2f((float)i/(float)m_gridLength, (float)j/(float)m_gridLength);
+            glTexCoord2f((float)i/(float)m_cols, (float)j/(float)m_rows);
             glVertex3fv(Vector3(j - m_rows/2, m_map[i][j], i - m_cols/2).xyz); // NoteToSelf : added a centering offset
-            //            glTexCoord2f((float)(i+1)/(float)m_gridLength, (float)j/(float)m_gridLength);
+            glTexCoord2f((float)(i+1)/(float)m_cols, (float)j/(float)m_rows);
             glVertex3fv(Vector3(j - m_rows/2, m_map[i+1][j], i+1 - m_cols/2).xyz); // NoteToSelf : added a centering offset
         }
         glEnd();

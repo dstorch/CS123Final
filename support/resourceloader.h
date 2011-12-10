@@ -28,7 +28,7 @@ namespace ResourceLoader
     GLuint loadSkybox();
 
     // load any texture
-    GLuint loadTexture(QFile *file);
+    GLuint loadTexture(const QString &filename);
 
     // These return a new QGLShaderProgram.  THIS MUST BE DELETED BY THE CALLER.
     QGLShaderProgram * newVertShaderProgram(const QGLContext *context, QString vertShader);
