@@ -27,6 +27,7 @@ GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent),
 m_timer(this), m_prevTime(0), m_prevFps(0.f), m_fps(0.f),
 m_font("Deja Vu Sans Mono", 8, 4)
 {
+
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
 
@@ -529,6 +530,6 @@ void GLWidget::paintText()
 
     // QGLWidget's renderText takes xy coordinates, a string, and a font
     renderText(10, 20, "FPS: " + QString::number((int) (m_prevFps)), m_font);
-    renderText(10, 35, "WASD keys: move camera", m_font);
+    renderText(10, 35, "WASD keys or scroll wheel: move camera", m_font);
     renderText(10, 50, "Arrow keys or mouse: look around", m_font);
 }
