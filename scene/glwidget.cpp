@@ -36,7 +36,7 @@ m_font("Deja Vu Sans Mono", 8, 4)
     m_camera.theta = M_PI * 1.5f, m_camera.phi = 0.2f;
     m_camera.fovy = 60.f;
 
-    m_map = new HeightMap(100, 100);
+    m_map = new HeightMap(150, 150);
     m_map->generateMap();
     m_map->computeNormals();
 

@@ -105,6 +105,14 @@ int HeightMap::height()
 
 float HeightMap::getFromHeightMap(int row, int col)
 {
+//    if( row < 0 )
+//        cout << "requested row : " << row << " less than 0" << endl;
+//    if( row >= m_rows )
+//        cout << "requested row : " << row << " greater than m_rows : " << m_rows << endl;
+//    if( col < 0 )
+//        cout << "requested col : " << col << " less than 0" << endl;
+//    if( col >= m_cols )
+//        cout << "requested col : " << col << " greater than m_cols : " << m_cols << endl;
     return m_map[row][col];
 }
 

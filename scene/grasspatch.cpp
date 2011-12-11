@@ -37,10 +37,10 @@ void GrassPatch::generateRandomClusters(int numClusters)
         float w3 = (1.0 - xweight) * zweight;
         float w4 = xweight * zweight;
 
-        int xlow = max(0, min(m_heightmap->height(), floor(coord.x)));
-        int xhigh = max(0, min(m_heightmap->height(), xlow + 1));
-        int zlow = max(0, min(m_heightmap->width(), floor(coord.y)));
-        int zhigh = max(0, min(m_heightmap->width(), zlow + 1));
+        int xlow = max(0, min(m_heightmap->height()-1, floor(coord.x)));
+        int xhigh = max(0, min(m_heightmap->height()-1, xlow + 1));
+        int zlow = max(0, min(m_heightmap->width()-1, floor(coord.y)));
+        int zhigh = max(0, min(m_heightmap->width()-1, zlow + 1));
 
         float height1 = m_heightmap->getFromHeightMap(xlow, zlow);
         float height2 = m_heightmap->getFromHeightMap(xlow, zhigh);
