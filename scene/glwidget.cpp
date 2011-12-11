@@ -145,6 +145,8 @@ void GLWidget::createShaderPrograms()
     m_shaderPrograms["grass"] = ResourceLoader::newShaderProgram(ctx, "shaders/grass.vert", "shaders/grass.frag");
 
     m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
+
+    m_shaderPrograms["depth"] = ResourceLoader::newShaderProgram(ctx, "shaders/depth.vert", "shaders/depth.frag");
 }
 
 /**
@@ -162,7 +164,7 @@ void GLWidget::createFramebufferObjects(int width, int height)
     m_framebufferObjects["fbo_0"]->format().setSamples(16);
     // Allocate the secondary framebuffer obejcts for rendering textures to (post process effects)
     // These do not require depth attachments
-    m_framebufferObjects["fbo_1"] = new QGLFramebufferObject(width, height, QGLFramebufferObject::NoAttachment,
+    m_framebufferObjects["fbo_1"] = new QGLFramebufferObject(width, height, QGLFramebufferObject::Depth,
                                                              GL_TEXTURE_2D, GL_RGB16F_ARB);
     // TODO: Create another framebuffer here.  Look up two lines to see how to do this... =.=
     m_framebufferObjects["fbo_2"] = new QGLFramebufferObject(width, height, QGLFramebufferObject::NoAttachment,
@@ -228,9 +230,9 @@ void GLWidget::paintGL()
     m_framebufferObjects["fbo_0"]->release();
 
     // Copy the rendered scene into framebuffer 1
-    m_framebufferObjects["fbo_0"]->blitFramebuffer(m_framebufferObjects["fbo_1"],
-                                                   QRect(0, 0, width, height), m_framebufferObjects["fbo_0"],
-                                                   QRect(0, 0, width, height), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    //m_framebufferObjects["fbo_0"]->blitFramebuffer(m_framebufferObjects["fbo_1"],
+    //                                               QRect(0, 0, width, height), m_framebufferObjects["fbo_0"],
+    //                                               QRect(0, 0, width, height), GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     // TODO: Add drawing code here
     applyOrthogonalCamera(width, height);
@@ -244,9 +246,10 @@ void GLWidget::paintGL()
     m_field.draw(m_grassTex);
     m_shaderPrograms["grass"]->release();*/
 
-    glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_1"]->texture());
+    glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_0"]->texture());
     glActiveTexture(GL_TEXTURE0);
     m_shaderPrograms["fog"]->bind();
+    m_shaderPrograms["grass"]->setUniformValue("scene", GL_TEXTURE0);
     renderTexturedQuad(width, height, true);
     m_shaderPrograms["fog"]->release();
     glBindTexture(GL_TEXTURE_2D, 0);
