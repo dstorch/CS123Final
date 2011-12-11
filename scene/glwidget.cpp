@@ -104,9 +104,6 @@ void GLWidget::initializeResources()
     m_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
     cout << "Loaded dragon..." << endl;
 
-    m_skybox = ResourceLoader::loadSkybox();
-    cout << "Loaded skybox..." << endl;
-
     loadCubeMap();
     cout << "Loaded cube map..." << endl;
 
@@ -299,7 +296,8 @@ void GLWidget::renderScene() {
     // Enable cube maps and draw the skybox
     glEnable(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMap);
-    glCallList(m_skybox);
+    //glCallList(m_skybox);
+    renderSkybox(m_camera.eye);
 
     // Enable culling (back) faces for rendering the dragon
     glEnable(GL_CULL_FACE);
@@ -327,6 +325,37 @@ void GLWidget::renderScene() {
     glBindTexture(GL_TEXTURE_CUBE_MAP,0);
     glBindTexture(GL_TEXTURE_2D,0);
     glDisable(GL_TEXTURE_CUBE_MAP);
+}
+
+void GLWidget::renderSkybox(Vector3 eye)
+{
+    glBegin(GL_QUADS);
+    float extent = 100.f;
+    glTexCoord3f( 1.0f, -1.0f, -1.0f); glVertex3f( extent + eye.x, -extent, -extent + eye.z);
+    glTexCoord3f(-1.0f, -1.0f, -1.0f); glVertex3f(-extent + eye.x, -extent, -extent + eye.z);
+    glTexCoord3f(-1.0f,  1.0f, -1.0f); glVertex3f(-extent + eye.x,  extent, -extent + eye.z);
+    glTexCoord3f( 1.0f,  1.0f, -1.0f); glVertex3f( extent + eye.x,  extent, -extent + eye.z);
+    glTexCoord3f( 1.0f, -1.0f,  1.0f); glVertex3f( extent + eye.x, -extent,  extent + eye.z);
+    glTexCoord3f( 1.0f, -1.0f, -1.0f); glVertex3f( extent + eye.x, -extent, -extent + eye.z);
+    glTexCoord3f( 1.0f,  1.0f, -1.0f); glVertex3f( extent + eye.x,  extent, -extent + eye.z);
+    glTexCoord3f( 1.0f,  1.0f,  1.0f); glVertex3f( extent + eye.x,  extent,  extent + eye.z);
+    glTexCoord3f(-1.0f, -1.0f,  1.0f); glVertex3f(-extent + eye.x, -extent,  extent + eye.z);
+    glTexCoord3f( 1.0f, -1.0f,  1.0f); glVertex3f( extent + eye.x, -extent,  extent + eye.z);
+    glTexCoord3f( 1.0f,  1.0f,  1.0f); glVertex3f( extent + eye.x,  extent,  extent + eye.z);
+    glTexCoord3f(-1.0f,  1.0f,  1.0f); glVertex3f(-extent + eye.x,  extent,  extent + eye.z);
+    glTexCoord3f(-1.0f, -1.0f, -1.0f); glVertex3f(-extent + eye.x, -extent, -extent + eye.z);
+    glTexCoord3f(-1.0f, -1.0f,  1.0f); glVertex3f(-extent + eye.x, -extent,  extent + eye.z);
+    glTexCoord3f(-1.0f,  1.0f,  1.0f); glVertex3f(-extent + eye.x,  extent,  extent + eye.z);
+    glTexCoord3f(-1.0f,  1.0f, -1.0f); glVertex3f(-extent + eye.x,  extent, -extent + eye.z);
+    glTexCoord3f(-1.0f,  1.0f, -1.0f); glVertex3f(-extent + eye.x,  extent, -extent + eye.z);
+    glTexCoord3f(-1.0f,  1.0f,  1.0f); glVertex3f(-extent + eye.x,  extent,  extent + eye.z);
+    glTexCoord3f( 1.0f,  1.0f,  1.0f); glVertex3f( extent + eye.x,  extent,  extent + eye.z);
+    glTexCoord3f( 1.0f,  1.0f, -1.0f); glVertex3f( extent + eye.x,  extent, -extent + eye.z);
+    glTexCoord3f(-1.0f, -1.0f, -1.0f); glVertex3f(-extent + eye.x, -extent, -extent + eye.z);
+    glTexCoord3f(-1.0f, -1.0f,  1.0f); glVertex3f(-extent + eye.x, -extent,  extent + eye.z);
+    glTexCoord3f( 1.0f, -1.0f,  1.0f); glVertex3f( extent + eye.x, -extent,  extent + eye.z);
+    glTexCoord3f( 1.0f, -1.0f, -1.0f); glVertex3f( extent + eye.x, -extent, -extent + eye.z);
+    glEnd();
 }
 
 /**
