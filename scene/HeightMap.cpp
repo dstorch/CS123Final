@@ -18,12 +18,15 @@ HeightMap::HeightMap(int rows, int cols)
     m_rows = rows;
     m_cols = cols;
 
-    m_map = new GLfloat*[rows];
+
+    // setup for the heightmap
+    m_map = new GLfloat*[cols];
     for( int i=0; i<cols; i++)
     {
-        m_map[i] = new GLfloat[cols];
+        m_map[i] = new GLfloat[rows];
     }
 
+    //setup for the normal map
     m_normalMap = new Vector3*[rows*cols];
     for(int i=0; i<m_rows; i++)
     {
@@ -50,10 +53,11 @@ GLfloat** HeightMap::generateMap()
         int x = floor( rand()%10 / 10.0 * m_rows );
         int z = floor( rand()%10 / 10.0 * m_cols );
 
-        cout << "created hill at : " << x << " , " << z << endl;
+//        cout << "created hill at : " << x << " , " << z << endl;
 
         addHill(x,z);
     }
+
     return m_map;
 }
 
@@ -135,7 +139,6 @@ void HeightMap::computeNormals()
                 normals[i] = offsets[i].cross(offsets[(i+1) % numNeighbors]);
             }
 
-
             // Average the normals and store the final value in the normal map
             Vector3 sum = Vector3(0.0, 0.0, 0.0);
             for (int i = 0; i < numNeighbors; ++i)
@@ -149,6 +152,11 @@ void HeightMap::computeNormals()
             delete[] normals;
         }
     }
+}
+
+Vector3* HeightMap::getNormal(int row, int col)
+{
+    return m_normalMap[row*m_cols + col];
 }
 
 QList<Vector3*> HeightMap::getSurroundingVertices(const GridPoint &coordinate)
@@ -180,6 +188,7 @@ QList<Vector3*> HeightMap::getSurroundingVertices(const GridPoint &coordinate)
     return vecs;
 }
 
+// prints out numerical chart of
 void HeightMap::printMap()
 {
     cout << "Map Heights : " << endl;
