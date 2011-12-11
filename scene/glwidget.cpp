@@ -139,15 +139,12 @@ void GLWidget::loadCubeMap()
 void GLWidget::createShaderPrograms()
 {
     const QGLContext *ctx = context();
-    m_shaderPrograms["reflect"] = ResourceLoader::newShaderProgram(ctx, "shaders/reflect.vert",
-                                                                   "shaders/reflect.frag");
-    m_shaderPrograms["refract"] = ResourceLoader::newShaderProgram(ctx, "shaders/refract.vert",
-                                                                   "shaders/refract.frag");
     m_shaderPrograms["brightpass"] = ResourceLoader::newFragShaderProgram(ctx, "shaders/brightpass.frag");
     m_shaderPrograms["blur"] = ResourceLoader::newFragShaderProgram(ctx, "shaders/blur.frag");
 
-    m_shaderPrograms["grass"] = ResourceLoader::newShaderProgram(ctx, "shaders/grass.vert",
-                                                                     "shaders/grass.frag");
+    m_shaderPrograms["grass"] = ResourceLoader::newShaderProgram(ctx, "shaders/grass.vert", "shaders/grass.frag");
+
+    m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
 }
 
 /**
@@ -238,11 +235,24 @@ void GLWidget::paintGL()
     // TODO: Add drawing code here
     applyOrthogonalCamera(width, height);
 
+    // TODO:
+    // use this as example for binding fog shader
+    /*glBindTexture(GL_TEXTURE_2D, m_grassTex);
+    glActiveTexture(GL_TEXTURE0);
+    m_shaderPrograms["grass"]->bind();
+    m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
+    m_field.draw(m_grassTex);
+    m_shaderPrograms["grass"]->release();*/
+
     glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_1"]->texture());
+    glActiveTexture(GL_TEXTURE0);
+    m_shaderPrograms["fog"]->bind();
     renderTexturedQuad(width, height, true);
+    m_shaderPrograms["fog"]->release();
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    m_framebufferObjects["fbo_2"]->bind();
+
+    /*m_framebufferObjects["fbo_2"]->bind();
     m_shaderPrograms["brightpass"]->bind();
     glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_1"]->texture());
     renderTexturedQuad(width, height, true);
@@ -270,7 +280,7 @@ void GLWidget::paintGL()
         renderTexturedQuad(width * scales[i], height * scales[i], false);
         glDisable(GL_BLEND);
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
+    }*/
 
 
     paintText();
@@ -298,6 +308,8 @@ void GLWidget::renderScene() {
     m_map->draw(m_soilTex);
 
     // draw grass on top of terrain
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_grassTex);
     glActiveTexture(GL_TEXTURE0);
@@ -305,28 +317,7 @@ void GLWidget::renderScene() {
     m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
     m_field.draw(m_grassTex);
     m_shaderPrograms["grass"]->release();
-
-    //    swapBuffers();
-
-    // Render the dragon with the refraction shader bound
-    // Get rid of dragon drawing code
-    /*glActiveTexture(GL_TEXTURE0);
-    m_shaderPrograms["refract"]->bind();
-    m_shaderPrograms["refract"]->setUniformValue("CubeMap", GL_TEXTURE0);
-    glPushMatrix();
-    glTranslatef(-1.25f, 0.f, 0.f);
-    glCallList(m_dragon.idx);
-    glPopMatrix();
-    m_shaderPrograms["refract"]->release();
-
-    // Render the dragon with the reflection shader bound
-    m_shaderPrograms["reflect"]->bind();
-    m_shaderPrograms["reflect"]->setUniformValue("CubeMap", GL_TEXTURE0);
-    glPushMatrix();
-    glTranslatef(1.25f,0.f,0.f);
-    glCallList(m_dragon.idx);
-    glPopMatrix();
-    m_shaderPrograms["reflect"]->release();*/
+    glDisable(GL_BLEND);
 
     // Disable culling, depth testing and cube maps
     glDisable(GL_CULL_FACE);
