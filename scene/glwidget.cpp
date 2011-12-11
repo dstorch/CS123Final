@@ -30,15 +30,15 @@ m_font("Deja Vu Sans Mono", 8, 4)
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
 
-    m_camera.center = Vector3(0.f, 10.f, 0.f);
-    m_camera.up = Vector3(0.f, 1.f, 0.f);
-    m_camera.zoom = 3.5f;
-    m_camera.theta = M_PI * 1.5f, m_camera.phi = 0.2f;
-    m_camera.fovy = 60.f;
-
     m_map = new HeightMap(150, 150);
     m_map->generateMap();
     m_map->computeNormals();
+
+    m_camera.eye = Vector3(0.f, 10.f, 0.f);
+    m_camera.up = Vector3(0.f, 1.f, 0.f);
+    m_camera.theta = M_PI * 1.5f, m_camera.phi = 0.2f;
+    m_camera.fovy = 60.f;
+    m_camera.heightmap = m_map;
 
     m_field = GrassField(m_map);
     m_field.makeField();
@@ -145,8 +145,6 @@ void GLWidget::createShaderPrograms()
     m_shaderPrograms["grass"] = ResourceLoader::newShaderProgram(ctx, "shaders/grass.vert", "shaders/grass.frag");
 
     m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
-
-    m_shaderPrograms["depth"] = ResourceLoader::newShaderProgram(ctx, "shaders/depth.vert", "shaders/depth.frag");
 }
 
 /**
@@ -197,12 +195,12 @@ void GLWidget::applyPerspectiveCamera(float width, float height)
 {
     float ratio = ((float) width) / height;
     Vector3 dir(-Vector3::fromAngles(m_camera.theta, m_camera.phi));
-    Vector3 eye(m_camera.center - dir * m_camera.zoom);
+    Vector3 center = m_camera.eye;
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(m_camera.fovy, ratio, 0.1f, 1000.f);
-    gluLookAt(eye.x, eye.y, eye.z, eye.x + dir.x, eye.y + dir.y, eye.z + dir.z,
+    gluLookAt(center.x, center.y, center.z, center.x + dir.x, center.y + dir.y, center.z + dir.z,
               m_camera.up.x, m_camera.up.y, m_camera.up.z);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -389,7 +387,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
     if (event->orientation() == Qt::Vertical)
     {
-        m_camera.mouseWheel(event->delta());
+        m_camera.moveForward(event->delta() / 80.0);
     }
 }
 
@@ -482,7 +480,31 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
+    case Qt::Key_W:
+        m_camera.moveForward(1.5);
+        break;
     case Qt::Key_S:
+        m_camera.moveForward(-1.5);
+        break;
+    case Qt::Key_A:
+        m_camera.moveRight(-1.5);
+        break;
+    case Qt::Key_D:
+        m_camera.moveRight(1.5);
+        break;
+    case Qt::Key_Up:
+        m_camera.mouseMove(Vector2(0.0, -3.0));
+        break;
+    case Qt::Key_Down:
+        m_camera.mouseMove(Vector2(0.0, 3.0));
+        break;
+    case Qt::Key_Left:
+        m_camera.mouseMove(Vector2(-3.0, 0.0));
+        break;
+    case Qt::Key_Right:
+        m_camera.mouseMove(Vector2(3.0, 0.0));
+        break;
+    case Qt::Key_P:
         QImage qi = grabFrameBuffer(false);
         QString filter;
         QString fileName = QFileDialog::getSaveFileName(this, tr("Save Image"), "", tr("PNG Image (*.png)"), &filter);
@@ -507,5 +529,6 @@ void GLWidget::paintText()
 
     // QGLWidget's renderText takes xy coordinates, a string, and a font
     renderText(10, 20, "FPS: " + QString::number((int) (m_prevFps)), m_font);
-    renderText(10, 35, "S: Save screenshot", m_font);
+    renderText(10, 35, "WASD keys: move camera", m_font);
+    renderText(10, 50, "Arrow keys or mouse: look around", m_font);
 }
