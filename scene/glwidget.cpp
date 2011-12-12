@@ -98,7 +98,7 @@ void GLWidget::initializeResources()
     // by the video card.  But that's a pain to do so we're not going to.
     cout << "--- Loading Resources ---" << endl;
 
-    m_grassTex = ResourceLoader::loadTexture(QString("textures/grass2.jpg"));
+    m_grassTex = ResourceLoader::loadTexture(QString("textures/shrub.jpg"));
     m_soilTex = ResourceLoader::loadTexture(QString("textures/soil.jpg"));
 
     m_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
@@ -296,7 +296,6 @@ void GLWidget::renderScene() {
     // Enable cube maps and draw the skybox
     glEnable(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMap);
-    //glCallList(m_skybox);
     renderSkybox(m_camera.eye);
 
     // Enable culling (back) faces for rendering the dragon

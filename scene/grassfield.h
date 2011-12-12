@@ -16,7 +16,7 @@ public:
 
     void draw(int texID);
 
-    static const int CLUSTERS_PER_PATCH = 4;
+    static const int CLUSTERS_PER_PATCH = 6;
     static const int PATCH_SIZE = 2;
 
 private:

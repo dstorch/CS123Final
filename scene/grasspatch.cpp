@@ -55,7 +55,7 @@ void GrassPatch::generateRandomClusters(int numClusters)
 
         // scale in y-direction by a random number
         float r = ((float)rand()/((float)RAND_MAX * 2.0)) + 1.0;
-        cluster.scaleBy(Vector3(1.f, r, 1.f));
+        cluster.scaleBy(Vector3(1.5f, r, 1.f));
 
         m_clusters.push_back(cluster);
     }
