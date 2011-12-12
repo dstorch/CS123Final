@@ -13,6 +13,7 @@
 #include "grasscluster.h"
 #include "HeightMap.h"
 #include "grassfield.h"
+#include "Constants.h"
 
 class QGLShaderProgram;
 class QGLFramebufferObject;

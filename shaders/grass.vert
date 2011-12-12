@@ -10,7 +10,7 @@ void main()
 	
 	// constant sway
 	vec4 dir = gl_ModelViewMatrix * vertex;
-	float distance = length(dir.xz);
+	float distance = length(dir);
 	dir = normalize(dir);
 	float perturbation = sin(4 * distance + curTime);
 	

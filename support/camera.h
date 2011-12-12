@@ -4,6 +4,7 @@
 #include <QMouseEvent>
 #include "vector.h"
 #include "HeightMap.h"
+#include "Constants.h"
 
 /**
     An orbiting perspective camera specified by a center, two angles, and a zoom factor

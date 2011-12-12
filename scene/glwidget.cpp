@@ -276,7 +276,7 @@ void GLWidget::renderScene() {
     glBindTexture(GL_TEXTURE_2D, m_grassTex);
     glActiveTexture(GL_TEXTURE0);
 
-    m_timeCounter -= 0.15;
+    m_timeCounter -= SWAY_SPEED;
     if (m_timeCounter <= 0.0)
     {
         m_timeCounter = 100.0;
@@ -370,7 +370,7 @@ void GLWidget::wheelEvent(QWheelEvent *event)
 {
     if (event->orientation() == Qt::Vertical)
     {
-        m_camera.moveForward(event->delta() / 80.0);
+        m_camera.moveForward(event->delta() / CAM_WHEEL_SENSITIVITY);
     }
 }
 
@@ -464,28 +464,28 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     switch(event->key())
     {
     case Qt::Key_W:
-        m_camera.moveForward(1.5);
+        m_camera.moveForward(CAM_TRANSLATE_SPEED);
         break;
     case Qt::Key_S:
-        m_camera.moveForward(-1.5);
+        m_camera.moveForward(-CAM_TRANSLATE_SPEED);
         break;
     case Qt::Key_A:
-        m_camera.moveRight(-1.5);
+        m_camera.moveRight(-CAM_TRANSLATE_SPEED);
         break;
     case Qt::Key_D:
-        m_camera.moveRight(1.5);
+        m_camera.moveRight(CAM_TRANSLATE_SPEED);
         break;
     case Qt::Key_Up:
-        m_camera.mouseMove(Vector2(0.0, -3.0));
+        m_camera.mouseMove(Vector2(0.0, -CAM_ROTATE_SPEED));
         break;
     case Qt::Key_Down:
-        m_camera.mouseMove(Vector2(0.0, 3.0));
+        m_camera.mouseMove(Vector2(0.0, CAM_ROTATE_SPEED));
         break;
     case Qt::Key_Left:
-        m_camera.mouseMove(Vector2(-3.0, 0.0));
+        m_camera.mouseMove(Vector2(-CAM_ROTATE_SPEED, 0.0));
         break;
     case Qt::Key_Right:
-        m_camera.mouseMove(Vector2(3.0, 0.0));
+        m_camera.mouseMove(Vector2(CAM_ROTATE_SPEED, 0.0));
         break;
     case Qt::Key_P:
         QImage qi = grabFrameBuffer(false);
