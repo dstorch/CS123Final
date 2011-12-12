@@ -37,8 +37,8 @@ bool OrbitCamera::inBoundingBox(Vector3 point)
     bool testx = point.x < 50.0 && point.x > -50.0;
     bool testz = point.z < 50.0 && point.z > -50.0;
 
-    int xcoord = max(0, min(heightmap->height() - 1, point.x + 75.0));
-    int zcoord = max(0, min(heightmap->width() - 1, point.z + 75.0));
+    int xcoord = max(0, min(heightmap->height() - 1, point.x + (TERRAIN_HEIGHT / 2.0)));
+    int zcoord = max(0, min(heightmap->width() - 1, point.z + (TERRAIN_WIDTH / 2.0)));
     float height = heightmap->getFromHeightMap(zcoord, xcoord);
 
     bool testy = point.y > (height + 1.0) && point.y < 50.0;

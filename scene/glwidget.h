@@ -13,6 +13,7 @@
 #include "grasscluster.h"
 #include "HeightMap.h"
 #include "grassfield.h"
+#include "Constants.h"
 
 class QGLShaderProgram;
 class QGLFramebufferObject;
@@ -47,10 +48,12 @@ protected:
     void applyOrthogonalCamera(float width, float height);
     void applyPerspectiveCamera(float width, float height);
     void renderTexturedQuad(int width, int height, bool flip);
-    void renderBlur(int width, int height);
     void renderScene();
     void renderSkybox(Vector3 eye);
     void paintText();
+
+    // used for wind effect click interaction
+    QVector4D windowToFilm(int x, int y, int width, int height);
 
 private:
     QTimer m_timer;
@@ -70,6 +73,9 @@ private:
 
     GLuint m_grassTex; // grass texture ID
     GLuint m_soilTex; // soil texture ID
+
+    // wind effect
+    float m_timeCounter;
 
     HeightMap* m_map;
     GrassField m_field;
