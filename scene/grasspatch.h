@@ -14,6 +14,10 @@ public:
     void generateRandomClusters(int numClusters);
 
     void draw(int texID);
+    float getX();
+    float getZ();
+
+    vector<GrassCluster>& getClusters();
 
 private:
     Vector2 randomXZ();

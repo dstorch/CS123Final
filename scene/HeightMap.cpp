@@ -1,14 +1,15 @@
-#define HILLS 50.0
-#define RADII 1000.0
-#define SIGMA2X 50.0
-#define SIGMA2Y 50.0
-#define A 4.0
+//#define HILLS 50.0
+//#define RADII 1000.0
+//#define SIGMA2X 50.0
+//#define SIGMA2Y 50.0
+//#define A 4.0
 
 #include "HeightMap.h"
 #include <stdlib.h>
 #include "math.h"
 #include "stdio.h"
 #include "iostream"
+#include "Constants.h"
 
 using namespace std;
 

@@ -122,3 +122,14 @@ void GrassCluster::draw(int texID)
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+float GrassCluster::getDistance()
+{
+    return m_distance;
+}
+
+void GrassCluster::setDistance(Vector3 eye)
+{
+    Vector3 toEye = m_position - eye;
+    m_distance = toEye.length();
+}

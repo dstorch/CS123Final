@@ -19,10 +19,15 @@ public:
 
     void scaleBy(Vector3 scale);
 
+    void setDistance(Vector3 eye);
+    float getDistance();
+
 private:
     Vector3 m_position;
     Vector3 m_scale;
     Vector3 m_up;
+
+    float m_distance;
 };
 
 #endif // GRASSCLUSTER_H

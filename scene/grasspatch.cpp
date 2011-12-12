@@ -61,6 +61,22 @@ void GrassPatch::generateRandomClusters(int numClusters)
     }
 }
 
+float GrassPatch::getX()
+{
+    return m_cornerX;
+}
+
+float GrassPatch::getZ()
+{
+    return m_cornerZ;
+}
+
+vector<GrassCluster>& GrassPatch::getClusters()
+{
+    return m_clusters;
+}
+
+
 void GrassPatch::draw(int texID)
 {
     for (vector<GrassCluster>::iterator it = m_clusters.begin(); it != m_clusters.end(); ++it)

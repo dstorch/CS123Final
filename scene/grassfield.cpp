@@ -1,4 +1,8 @@
 #include "grassfield.h"
+#include "vector"
+#include <queue>
+
+using namespace std;
 
 GrassField::GrassField(HeightMap *heightmap)
 {
@@ -32,10 +36,35 @@ void GrassField::makeField()
     }
 }
 
-void GrassField::draw(int texID)
+bool clusterDistanceComp(GrassCluster &c1, GrassCluster &c2)
 {
+    return c1.getDistance() > c2.getDistance();
+}
+
+
+
+void GrassField::draw(int texID, Vector3 eye)
+{
+    QList<GrassCluster> clusterList = QList<GrassCluster>();
+
     for (vector<GrassPatch*>::iterator it = m_patches.begin(); it != m_patches.end(); ++it)
     {
-       (*it)->draw(texID);
+        vector<GrassCluster> clusters = (*it)->getClusters();
+
+        for (vector<GrassCluster>::iterator it = clusters.begin(); it != clusters.end(); ++it)
+        {
+            GrassCluster cluster = (*it);
+            cluster.setDistance(eye);
+
+            clusterList.push_back(cluster);
+        }
+    }
+
+    qSort(clusterList.begin(), clusterList.end(), clusterDistanceComp);
+
+    for (QList<GrassCluster>::iterator it = clusterList.begin(); it != clusterList.end(); ++it)
+    {
+
+        (*it).draw(texID);
     }
 }

@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QWheelEvent>
 #include "glm.h"
+#include "Constants.h"
 
 using std::cout;
 using std::endl;
@@ -31,7 +32,7 @@ m_font("Deja Vu Sans Mono", 8, 4)
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
 
-    m_map = new HeightMap(150, 150);
+    m_map = new HeightMap(TERRAIN_HEIGHT, TERRAIN_WIDTH);
     m_map->generateMap();
     m_map->computeNormals();
 
@@ -98,7 +99,7 @@ void GLWidget::initializeResources()
     // by the video card.  But that's a pain to do so we're not going to.
     cout << "--- Loading Resources ---" << endl;
 
-    m_grassTex = ResourceLoader::loadTexture(QString("textures/shrub.jpg"));
+    m_grassTex = ResourceLoader::loadTexture(QString("textures/grass2.jpg"));
     m_soilTex = ResourceLoader::loadTexture(QString("textures/soil.jpg"));
 
     m_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
@@ -314,7 +315,7 @@ void GLWidget::renderScene() {
     glActiveTexture(GL_TEXTURE0);
     m_shaderPrograms["grass"]->bind();
     m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
-    m_field.draw(m_grassTex);
+    m_field.draw(m_grassTex, m_camera.eye);
     m_shaderPrograms["grass"]->release();
     glDisable(GL_BLEND);
 

@@ -24,7 +24,8 @@ HEADERS += scene/glwidget.h \
     math/matrix.inl \
     scene/grasspatch.h \
     scene/HeightMap.h \
-    scene/grassfield.h
+    scene/grassfield.h \
+    scene/Constants.h
 SOURCES += scene/glwidget.cpp \
     lib/targa.cpp \
     lib/glm.cpp \
