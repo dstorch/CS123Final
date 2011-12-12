@@ -29,7 +29,6 @@ void GrassCluster::draw(int texID)
     glBegin(GL_QUADS);
 
     // front
-    //glNormal3f(0.0, 0.0, -1.0);
     glNormal3f(0.0, 1.0, 0.0);
     glTexCoord2f(1.0f, 1.0f);
     glVertex3f(1.0, 0.0, 0.0);
@@ -41,7 +40,6 @@ void GrassCluster::draw(int texID)
     glVertex3f(-1.0, 0.0, 0.0);
 
     // back
-    //glNormal3f(0.0, 0.0, 1.0);
     glNormal3f(0.0, 1.0, 0.0);
     glTexCoord2f(0.0f, 1.0f);
     glVertex3f(-1.0, 0.0, 0.0);
@@ -61,7 +59,6 @@ void GrassCluster::draw(int texID)
     float znormal = sin(normalangle);
 
     // front
-    //glNormal3f(xnormal, 0.0, znormal);
     glNormal3f(0.0, 1.0, 0.0);
     glTexCoord2f(1.0f, 1.0f);
     glVertex3f(x, 0.0, z);
@@ -73,7 +70,6 @@ void GrassCluster::draw(int texID)
     glVertex3f(-x, 0.0, -z);
 
     // back
-    //glNormal3f(-xnormal, 0.0, -znormal);
     glNormal3f(0.0, 1.0, 0.0);
     glTexCoord2f(0.0f, 1.0f);
     glVertex3f(-x, 0.0, -z);
@@ -93,7 +89,6 @@ void GrassCluster::draw(int texID)
     znormal = sin(normalangle);
 
     // front
-    //glNormal3f(xnormal, 0.0, znormal);
     glNormal3f(0.0, 1.0, 0.0);
     glTexCoord2f(1.0, 1.0);
     glVertex3f(x, 0.0, z);
@@ -105,7 +100,6 @@ void GrassCluster::draw(int texID)
     glVertex3f(-x, 0.0, -z);
 
     // back
-    //glNormal3f(-xnormal, 0.0, -znormal);
     glNormal3f(0.0, 1.0, 0.0);
     glTexCoord2f(0.0, 1.0);
     glVertex3f(-x, 0.0, -z);

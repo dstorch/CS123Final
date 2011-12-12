@@ -44,6 +44,8 @@ m_font("Deja Vu Sans Mono", 8, 4)
     m_field = GrassField(m_map);
     m_field.makeField();
 
+    m_timeCounter = 0.0;
+
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
@@ -98,7 +100,7 @@ void GLWidget::initializeResources()
     // by the video card.  But that's a pain to do so we're not going to.
     cout << "--- Loading Resources ---" << endl;
 
-    m_grassTex = ResourceLoader::loadTexture(QString("textures/shrub.jpg"));
+    m_grassTex = ResourceLoader::loadTexture(QString("textures/grass2.jpg"));
     m_soilTex = ResourceLoader::loadTexture(QString("textures/soil.jpg"));
 
     m_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
@@ -142,7 +144,9 @@ void GLWidget::createShaderPrograms()
 
     m_shaderPrograms["grass"] = ResourceLoader::newShaderProgram(ctx, "shaders/grass.vert", "shaders/grass.frag");
 
-    m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
+    // TODO
+    /*m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
+    m_shaderPrograms["depth"] = ResourceLoader::newShaderProgram(ctx, "shaders/depth.vert", "shaders/depth.frag");*/
 }
 
 /**
@@ -204,6 +208,14 @@ void GLWidget::applyPerspectiveCamera(float width, float height)
     glLoadIdentity();
 }
 
+QVector4D GLWidget::windowToFilm(int x, int y, int width, int height)
+{
+    float xfilm = ((2 * x) / (float) width) - 1.0;
+    float yfilm = 1.0 - ((2 * y) / (float) height);
+    return QVector4D(xfilm, yfilm, -1.0, 1.0);
+}
+
+
 /**
   Draws the scene to a buffer which is rendered to the screen when this function exits.
  **/
@@ -225,62 +237,12 @@ void GLWidget::paintGL()
     renderScene();
     m_framebufferObjects["fbo_0"]->release();
 
-    // Copy the rendered scene into framebuffer 1
-    //m_framebufferObjects["fbo_0"]->blitFramebuffer(m_framebufferObjects["fbo_1"],
-    //                                               QRect(0, 0, width, height), m_framebufferObjects["fbo_0"],
-    //                                               QRect(0, 0, width, height), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
     // TODO: Add drawing code here
     applyOrthogonalCamera(width, height);
 
-    // TODO:
-    // use this as example for binding fog shader
-    /*glBindTexture(GL_TEXTURE_2D, m_grassTex);
-    glActiveTexture(GL_TEXTURE0);
-    m_shaderPrograms["grass"]->bind();
-    m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
-    m_field.draw(m_grassTex);
-    m_shaderPrograms["grass"]->release();*/
-
     glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_0"]->texture());
-    glActiveTexture(GL_TEXTURE0);
-    m_shaderPrograms["fog"]->bind();
-    m_shaderPrograms["grass"]->setUniformValue("scene", GL_TEXTURE0);
     renderTexturedQuad(width, height, true);
-    m_shaderPrograms["fog"]->release();
     glBindTexture(GL_TEXTURE_2D, 0);
-
-
-    /*m_framebufferObjects["fbo_2"]->bind();
-    m_shaderPrograms["brightpass"]->bind();
-    glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_1"]->texture());
-    renderTexturedQuad(width, height, true);
-    m_shaderPrograms["brightpass"]->release();
-    glBindTexture(GL_TEXTURE_2D, 0);
-    m_framebufferObjects["fbo_2"]->release();
-
-    // TODO: Uncomment this section in step 2 of the lab
-
-    float scales[] = {4.f,8.f,16.f,32.f};
-    for (int i = 0; i < 4; ++i)
-    {
-        // Render the blurred brightpass filter result to fbo 1
-        renderBlur(width / scales[i], height / scales[i]);
-
-        // Bind the image from fbo to a texture
-        glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_1"]->texture());
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-        // Enable alpha blending and render the texture to the screen
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        glTranslatef(0.f, (scales[i] - 1) * -height, 0.f);
-        renderTexturedQuad(width * scales[i], height * scales[i], false);
-        glDisable(GL_BLEND);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }*/
-
 
     paintText();
 }
@@ -309,13 +271,26 @@ void GLWidget::renderScene() {
     // draw grass on top of terrain
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_grassTex);
     glActiveTexture(GL_TEXTURE0);
+
+    m_timeCounter -= 0.15;
+    if (m_timeCounter <= 0.0)
+    {
+        m_timeCounter = 100.0;
+    }
+
     m_shaderPrograms["grass"]->bind();
     m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
+    m_shaderPrograms["grass"]->setUniformValue("curTime", (GLfloat) m_timeCounter);
+
     m_field.draw(m_grassTex);
+
     m_shaderPrograms["grass"]->release();
+
+    glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
     glDisable(GL_BLEND);
 
     // Disable culling, depth testing and cube maps
@@ -358,36 +333,6 @@ void GLWidget::renderSkybox(Vector3 eye)
 }
 
 /**
-  Run a gaussian blur on the texture stored in fbo 2 and
-  put the result in fbo 1.  The blur should have a radius of 2.
-
-  @param width: the viewport width
-  @param height: the viewport height
-**/
-void GLWidget::renderBlur(int width, int height)
-{
-    int radius = 2;
-    int dim = radius * 2 + 1;
-    GLfloat kernel[dim * dim];
-    GLfloat offsets[dim * dim * 2];
-    createBlurKernel(radius, width, height, &kernel[0], &offsets[0]);
-    // TODO: Finish filling this in
-
-    m_framebufferObjects["fbo_1"]->bind();
-    m_shaderPrograms["blur"]->bind();
-    glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_2"]->texture());
-
-    m_shaderPrograms["blur"]->setUniformValueArray(&"offsets"[0], &offsets[0], dim * dim, 2);
-    m_shaderPrograms["blur"]->setUniformValueArray(&"kernel"[0], &kernel[0], dim * dim, 1);
-
-    renderTexturedQuad(width, height, false);
-    m_shaderPrograms["blur"]->release();
-    glBindTexture(GL_TEXTURE_2D, 0);
-    m_framebufferObjects["fbo_1"]->release();
-
-}
-
-/**
   Called when the mouse is dragged.  Rotates the camera based on mouse movement.
 **/
 void GLWidget::mouseMoveEvent(QMouseEvent *event)
@@ -407,6 +352,15 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 {
     m_prevMousePos.x = event->x();
     m_prevMousePos.y = event->y();
+
+    // spawn wind
+    switch(event->button())
+    {
+    case Qt::RightButton:
+        break;
+    default:
+        break;
+    }
 }
 
 /**

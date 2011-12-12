@@ -6,7 +6,7 @@ void main()
 {
     vec4 sampleGrass = texture2D(grassTexture, gl_TexCoord[0].st);
     
-    if (sampleGrass.r > 0.6)
+    if (sampleGrass.r > 0.4)
     {
 	gl_FragColor = textureBackground;
     }

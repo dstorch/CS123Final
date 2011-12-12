@@ -36,6 +36,6 @@ void GrassField::draw(int texID)
 {
     for (vector<GrassPatch*>::iterator it = m_patches.begin(); it != m_patches.end(); ++it)
     {
-       (*it)->draw(texID);
+        (*it)->draw(texID);
     }
 }
