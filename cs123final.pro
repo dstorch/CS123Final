@@ -45,4 +45,8 @@ OTHER_FILES += shaders/refract.vert \
     shaders/reflect.frag \
     shaders/brightpass.frag \
     shaders/blur.frag
+
+QMAKE_CFLAGS += -O3
+QMAKE_CXXFLAGS += -O3 -ffast-math -msse
+
 RESOURCES += 
