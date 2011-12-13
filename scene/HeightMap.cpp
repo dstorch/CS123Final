@@ -29,6 +29,48 @@ HeightMap::HeightMap(int rows, int cols)
 
     //setup for the normal map
     m_normalMap = new Vector3*[rows*cols];
+
+    resetMap();
+}
+
+HeightMap::~HeightMap()
+{
+    // TODO: cleanup the newed m_map array, a 1D vector of GLfloat*
+    // TODO: cleanup the newed m_normalMap array, a 1D array of Vector3*
+}
+
+bool HeightMap::moreHills()
+{
+    if (constants.a < 8.0)
+    {
+        constants.a += 0.25;
+        constants.hills += 2;
+        constants.sigma2x += 10.0;
+        constants.sigma2y += 10.0;
+
+        return true;
+    }
+
+    return false;
+}
+
+bool HeightMap::lessHills()
+{
+    if (constants.a > 0.25)
+    {
+        constants.a -= 0.25;
+        constants.hills -= 2;
+        constants.sigma2x -= 10.0;
+        constants.sigma2y -= 10.0;
+
+        return true;
+    }
+
+    return false;
+}
+
+void HeightMap::resetMap()
+{
     for(int i=0; i<m_rows; i++)
     {
         for( int j=0; j<m_cols; j++)
@@ -39,22 +81,16 @@ HeightMap::HeightMap(int rows, int cols)
     }
 }
 
-HeightMap::~HeightMap()
-{
-    // TODO: cleanup the newed m_map array, a 1D vector of GLfloat*
-    // TODO: cleanup the newed m_normalMap array, a 1D array of Vector3*
-}
-
 GLfloat** HeightMap::generateMap()
 {
     srand ( time(NULL) );
 
-    for(int i = 0; i< HILLS; i++)
+    for(int i = 0; i< constants.hills; i++)
     {
         int x = floor( rand()%10 / 10.0 * m_rows );
         int z = floor( rand()%10 / 10.0 * m_cols );
 
-//        cout << "created hill at : " << x << " , " << z << endl;
+        //        cout << "created hill at : " << x << " , " << z << endl;
 
         addHill(x,z);
     }
@@ -84,10 +120,10 @@ void HeightMap::addHill(int x, int z)
                 continue;
             else
             {
-                float xContrib = pow( xOff, 2) / 2 / SIGMA2X;
-                float zContrib = pow( zOff, 2) / 2 / SIGMA2Y;
+                float xContrib = pow( xOff, 2) / 2 / constants.sigma2x;
+                float zContrib = pow( zOff, 2) / 2 / constants.sigma2y;
                 float primary = exp( -(xContrib + zContrib));
-                float height = A*primary;
+                float height = constants.a*primary;
                 m_map[row][col] += height;
             }
         }
@@ -106,14 +142,14 @@ int HeightMap::height()
 
 float HeightMap::getFromHeightMap(int row, int col)
 {
-//    if( row < 0 )
-//        cout << "requested row : " << row << " less than 0" << endl;
-//    if( row >= m_rows )
-//        cout << "requested row : " << row << " greater than m_rows : " << m_rows << endl;
-//    if( col < 0 )
-//        cout << "requested col : " << col << " less than 0" << endl;
-//    if( col >= m_cols )
-//        cout << "requested col : " << col << " greater than m_cols : " << m_cols << endl;
+    //    if( row < 0 )
+    //        cout << "requested row : " << row << " less than 0" << endl;
+    //    if( row >= m_rows )
+    //        cout << "requested row : " << row << " greater than m_rows : " << m_rows << endl;
+    //    if( col < 0 )
+    //        cout << "requested col : " << col << " less than 0" << endl;
+    //    if( col >= m_cols )
+    //        cout << "requested col : " << col << " greater than m_cols : " << m_cols << endl;
     return m_map[row][col];
 }
 

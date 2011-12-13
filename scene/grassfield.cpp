@@ -21,6 +21,34 @@ GrassField::~GrassField()
     }
 }
 
+void GrassField::clearField()
+{
+    for (vector<GrassPatch*>::iterator it = m_patches.begin(); it != m_patches.end(); ++it)
+    {
+        (*it)->clearPatch();
+    }
+}
+
+void GrassField::denser()
+{
+    if (constants.clustersPerPatch < 6)
+    {
+        constants.clustersPerPatch += 1;
+        clearField();
+        makeField();
+    }
+}
+
+void GrassField::lessDense()
+{
+    if (constants.clustersPerPatch > 1)
+    {
+        constants.clustersPerPatch -= 1;
+        clearField();
+        makeField();
+    }
+}
+
 void GrassField::makeField()
 {
     srand((unsigned)time(0));
@@ -30,7 +58,7 @@ void GrassField::makeField()
         for (int j = 0; j < m_heightmap->width() - 1; j += PATCH_SIZE)
         {
             GrassPatch *patch = new GrassPatch(i, j, m_heightmap);
-            patch->generateRandomClusters(CLUSTERS_PER_PATCH);
+            patch->generateRandomClusters(constants.clustersPerPatch);
             m_patches.push_back(patch);
         }
     }

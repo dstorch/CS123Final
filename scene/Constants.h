@@ -14,10 +14,27 @@
 
 // camera motion constants
 #define CAM_TRANSLATE_SPEED 1.5
-#define CAM_ROTATE_SPEED 3.0
 #define CAM_WHEEL_SENSITIVITY 80.0
 
 // swaying grass animation parameters
 #define SWAY_SPEED 0.15
+
+#define CLUSTERS_PER_PATCH 4
+#define PATCH_SIZE 2
+
+struct Constants
+{
+    void initializeConstants();
+
+    int hills;
+    float sigma2x;
+    float sigma2y;
+    float a;
+
+    float clustersPerPatch;
+};
+
+extern Constants constants;
+
 
 #endif // CONSTANTS_H

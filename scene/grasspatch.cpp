@@ -84,3 +84,8 @@ void GrassPatch::draw(int texID)
         (*it).draw(texID);
     }
 }
+
+void GrassPatch::clearPatch()
+{
+        m_clusters.clear();
+}

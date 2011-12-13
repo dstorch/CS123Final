@@ -36,7 +36,8 @@ SOURCES += scene/glwidget.cpp \
     scene/grasscluster.cpp \
     scene/grasspatch.cpp \
     scene/HeightMap.cpp \
-    scene/grassfield.cpp
+    scene/grassfield.cpp \
+    scene/Constants.cpp
 FORMS += mainwindow.ui \
     support/mainwindow.ui
 OTHER_FILES += shaders/refract.vert \
@@ -45,8 +46,8 @@ OTHER_FILES += shaders/refract.vert \
     shaders/reflect.frag \
     shaders/brightpass.frag \
     shaders/blur.frag
-
 QMAKE_CFLAGS += -O3
-QMAKE_CXXFLAGS += -O3 -ffast-math -msse
-
+QMAKE_CXXFLAGS += -O3 \
+    -ffast-math \
+    -msse
 RESOURCES += 

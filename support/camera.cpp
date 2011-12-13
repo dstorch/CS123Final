@@ -45,3 +45,16 @@ bool OrbitCamera::inBoundingBox(Vector3 point)
 
     return testx && testy && testz;
 }
+
+void OrbitCamera::keepAboveTerrain()
+{
+    int xcoord = max(0, min(heightmap->height() - 1, eye.x + (TERRAIN_HEIGHT / 2.0)));
+    int zcoord = max(0, min(heightmap->width() - 1, eye.z + (TERRAIN_WIDTH / 2.0)));
+
+    float height = heightmap->getFromHeightMap(zcoord, xcoord);
+
+    if (height > (eye.y + 2.0))
+    {
+        eye.y = height + 4.0;
+    }
+}

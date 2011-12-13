@@ -23,6 +23,8 @@ struct OrbitCamera
     void moveForward(float amount);
     void moveRight(float amount);
     bool inBoundingBox(Vector3 center);
+
+    void keepAboveTerrain();
 };
 
 #endif // CAMERA_H

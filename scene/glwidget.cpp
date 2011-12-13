@@ -32,6 +32,8 @@ m_font("Deja Vu Sans Mono", 8, 4)
     setFocusPolicy(Qt::StrongFocus);
     setMouseTracking(true);
 
+    constants.initializeConstants();
+
     m_map = new HeightMap(TERRAIN_HEIGHT, TERRAIN_WIDTH);
     m_map->generateMap();
     m_map->computeNormals();
@@ -44,6 +46,8 @@ m_font("Deja Vu Sans Mono", 8, 4)
 
     m_field = GrassField(m_map);
     m_field.makeField();
+
+    m_camera.keepAboveTerrain();
 
     m_timeCounter = 0.0;
 
@@ -270,9 +274,9 @@ void GLWidget::renderScene() {
     m_map->draw(m_soilTex);
 
     // draw grass on top of terrain
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_grassTex);
     glActiveTexture(GL_TEXTURE0);
@@ -477,16 +481,32 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         m_camera.moveRight(CAM_TRANSLATE_SPEED);
         break;
     case Qt::Key_Up:
-        m_camera.mouseMove(Vector2(0.0, -CAM_ROTATE_SPEED));
+        if (m_map->moreHills())
+        {
+            m_map->resetMap();
+            m_map->generateMap();
+            m_map->computeNormals();
+            m_field.clearField();
+            m_field.makeField();
+            m_camera.keepAboveTerrain();
+        }
         break;
     case Qt::Key_Down:
-        m_camera.mouseMove(Vector2(0.0, CAM_ROTATE_SPEED));
+        if (m_map->lessHills())
+        {
+            m_map->resetMap();
+            m_map->generateMap();
+            m_map->computeNormals();
+            m_field.clearField();
+            m_field.makeField();
+            m_camera.keepAboveTerrain();
+        }
         break;
-    case Qt::Key_Left:
-        m_camera.mouseMove(Vector2(-CAM_ROTATE_SPEED, 0.0));
+    case Qt::Key_M:
+        m_field.denser();
         break;
-    case Qt::Key_Right:
-        m_camera.mouseMove(Vector2(CAM_ROTATE_SPEED, 0.0));
+    case Qt::Key_L:
+        m_field.lessDense();
         break;
     case Qt::Key_P:
         QImage qi = grabFrameBuffer(false);
@@ -502,7 +522,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
  **/
 void GLWidget::paintText()
 {
-    glColor3f(1.f, 1.f, 1.f);
+    glColor3f(0.f, 0.f, 0.f);
 
     // Combine the previous and current framerate
     if (m_fps >= 0 && m_fps < 1000)
@@ -513,6 +533,8 @@ void GLWidget::paintText()
 
     // QGLWidget's renderText takes xy coordinates, a string, and a font
     renderText(10, 20, "FPS: " + QString::number((int) (m_prevFps)), m_font);
-    renderText(10, 35, "WASD keys or scroll wheel: move camera", m_font);
-    renderText(10, 50, "Arrow keys or mouse: look around", m_font);
+    renderText(10, 35, "M/L: more or less grass", m_font);
+    renderText(10, 50, "Up/Down: more or less hilly", m_font);
+
+    glColor3f(1.f, 1.f, 1.f);
 }

@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 #include "vector.h"
 #include "qlist.h"
+#include "Constants.h"
 
 typedef Vector2 GridPoint;
 
@@ -17,6 +18,11 @@ public:
     void addHill(int x, int z);
 
     void computeNormals();
+
+    void resetMap();
+
+    bool moreHills();
+    bool lessHills();
 
     void printMap();
     float getRand();

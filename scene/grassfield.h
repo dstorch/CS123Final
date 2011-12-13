@@ -3,6 +3,7 @@
 
 #include "HeightMap.h"
 #include "grasspatch.h"
+#include "Constants.h"
 #include <vector>
 
 class GrassField
@@ -15,10 +16,11 @@ public:
     void makeField();
 
     void draw(int texID, Vector3 eye);
-//    bool comp(GrassPatch* a, GrassPatch* b);
 
-    static const int CLUSTERS_PER_PATCH = 4;
-    static const int PATCH_SIZE = 2;
+    void denser();
+    void lessDense();
+
+    void clearField();
 
 private:
     HeightMap *m_heightmap;

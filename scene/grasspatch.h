@@ -17,6 +17,8 @@ public:
     float getX();
     float getZ();
 
+    void clearPatch();
+
     vector<GrassCluster>& getClusters();
 
 private:
