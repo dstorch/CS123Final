@@ -1,17 +1,19 @@
 uniform sampler2D grassTexture;
 
-vec4 textureBackground = vec4(0.1294, 0.3059, 0.0667, 0.0);
+vec4 fogColor = vec4(0.7, 0.7, 0.7, 1.0);
 
 void main()
 {
     vec4 sampleGrass = texture2D(grassTexture, gl_TexCoord[0].st);
     
+    float blend = pow(gl_FragCoord.z, 200);
+    
+    vec4 color = (1.0 - blend) * sampleGrass + blend * fogColor;
+    
     if (sampleGrass.r > 0.4)
     {
-	gl_FragColor = textureBackground;
+	color.a = 0.0;
     }
-    else
-    {
-	gl_FragColor = sampleGrass;
-    }
+    
+    gl_FragColor = color;
 }     

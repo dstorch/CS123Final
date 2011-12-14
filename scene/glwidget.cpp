@@ -108,6 +108,9 @@ void GLWidget::initializeResources()
     m_grassTex = ResourceLoader::loadTexture(QString("textures/grass2.jpg"));
     m_soilTex = ResourceLoader::loadTexture(QString("textures/soil.jpg"));
 
+    m_depthTex = 0;
+    glGenTextures(1, &m_depthTex);
+
     m_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
     cout << "Loaded dragon..." << endl;
 
@@ -149,9 +152,9 @@ void GLWidget::createShaderPrograms()
 
     m_shaderPrograms["grass"] = ResourceLoader::newShaderProgram(ctx, "shaders/grass.vert", "shaders/grass.frag");
 
-    // TODO
-    /*m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
-    m_shaderPrograms["depth"] = ResourceLoader::newShaderProgram(ctx, "shaders/depth.vert", "shaders/depth.frag");*/
+    m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
+
+    m_shaderPrograms["sky"] = ResourceLoader::newShaderProgram(ctx, "shaders/sky.vert", "shaders/sky.frag");
 }
 
 /**
@@ -236,20 +239,87 @@ void GLWidget::paintGL()
     int width = this->width();
     int height = this->height();
 
+    // render the terrain to a framebuffer, and
+    // copy the resulting depth buffer to a texture
+    m_framebufferObjects["fbo_1"]->bind();
+    applyPerspectiveCamera(width, height);
+    renderTerrain();
+
+    // Make the texture we just created the new active texture
+    glBindTexture(GL_TEXTURE_2D, m_depthTex);
+
+    // Set filtering options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // Set coordinate wrapping options
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 0, 0, this->width(), this->height(), 1);
+
+    m_framebufferObjects["fbo_1"]->release();
+
     // Render the scene to a framebuffer
     m_framebufferObjects["fbo_0"]->bind();
     applyPerspectiveCamera(width, height);
     renderScene();
     m_framebufferObjects["fbo_0"]->release();
 
-    // TODO: Add drawing code here
     applyOrthogonalCamera(width, height);
 
+    // draw the scene as a textured quad, blending
+    // with the original depth buffer
+    m_shaderPrograms["fog"]->bind();
+
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_0"]->texture());
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_depthTex);
+
+    m_shaderPrograms["fog"]->setUniformValue("sceneTex", 0);
+    m_shaderPrograms["fog"]->setUniformValue("depthTex", 1);
+
     renderTexturedQuad(width, height, true);
+
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+    m_shaderPrograms["fog"]->release();
+
     paintText();
+}
+
+/*!
+ * Renders only the terrain, with no grass. Useful for
+ * getting a good depth buffer
+ */
+void GLWidget::renderTerrain()
+{
+    // Enable depth testing
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // Enable cube maps and draw the skybox
+    glEnable(GL_TEXTURE_CUBE_MAP);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMap);
+    renderSkybox(m_camera.eye);
+
+    // Enable culling (back) faces for rendering the dragon
+    glEnable(GL_CULL_FACE);
+
+    glDisable(GL_TEXTURE_CUBE_MAP);
+
+    // draw terrain
+    m_map->draw(m_soilTex, 3.0);
+
+    // Disable culling, depth testing and cube maps
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glBindTexture(GL_TEXTURE_CUBE_MAP,0);
+    glBindTexture(GL_TEXTURE_2D,0);
+    glDisable(GL_TEXTURE_CUBE_MAP);
 }
 
 /**
@@ -271,7 +341,7 @@ void GLWidget::renderScene() {
     glDisable(GL_TEXTURE_CUBE_MAP);
 
     // draw terrain
-    m_map->draw(m_soilTex);
+    m_map->draw(m_soilTex, 0.0);
 
     // draw grass on top of terrain
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);

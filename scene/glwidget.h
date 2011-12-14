@@ -49,6 +49,7 @@ protected:
     void applyPerspectiveCamera(float width, float height);
     void renderTexturedQuad(int width, int height, bool flip);
     void renderScene();
+    void renderTerrain();
     void renderSkybox(Vector3 eye);
     void paintText();
 
@@ -73,6 +74,7 @@ private:
 
     GLuint m_grassTex; // grass texture ID
     GLuint m_soilTex; // soil texture ID
+    GLuint m_depthTex;
 
     // wind effect
     float m_timeCounter;
