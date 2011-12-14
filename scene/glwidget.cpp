@@ -239,6 +239,7 @@ void GLWidget::paintGL()
     int width = this->width();
     int height = this->height();
 
+
     // Render the scene to a framebuffer
     m_framebufferObjects["fbo_0"]->bind();
     applyPerspectiveCamera(width, height);
@@ -247,9 +248,18 @@ void GLWidget::paintGL()
 
     applyOrthogonalCamera(width, height);
 
+    // draw the scene as a textured quad, blending
+    // with the original depth buffer
+    m_shaderPrograms["fog"]->bind();
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_framebufferObjects["fbo_0"]->texture());
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_depthTex);
+
+    m_shaderPrograms["fog"]->setUniformValue("sceneTex", 0);
+    m_shaderPrograms["fog"]->setUniformValue("depthTex", 1);
 
     renderTexturedQuad(width, height, true);
 
@@ -260,6 +270,7 @@ void GLWidget::paintGL()
 
     paintText();
 }
+
 
 /**
   Renders the scene.  May be called multiple times by paintGL() if necessary.
@@ -280,7 +291,7 @@ void GLWidget::renderScene() {
     glDisable(GL_TEXTURE_CUBE_MAP);
 
     // draw terrain
-    m_map->draw(m_soilTex);
+    m_map->draw(m_soilTex   );
 
     // draw grass on top of terrain
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
@@ -296,10 +307,15 @@ void GLWidget::renderScene() {
         m_timeCounter = 100.0;
     }
 
+    QVector4D windOrig(50.0,0.0,50.0,0.0);
+    QVector4D windDir(-1.0,0.0,0.0,0.0);
+
     m_shaderPrograms["grass"]->bind();
-    m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
+    m_shaderPrograms["grass"]->setUniformValue("grassTex    ture", GL_TEXTURE0);
 
     m_shaderPrograms["grass"]->setUniformValue("curTime", (GLfloat) m_timeCounter);
+    m_shaderPrograms["grass"]->setUniformValue("windOrigin", windOrig);
+    m_shaderPrograms["grass"]->setUniformValue("windDir", windDir);
 
     QVector3D eye = QVector3D(m_camera.eye.x, m_camera.eye.y, m_camera.eye.z);
     m_shaderPrograms["grass"]->setUniformValue("eye", eye);
