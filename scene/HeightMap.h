@@ -33,7 +33,7 @@ public:
     Vector3* getNormal(int row, int col);
 
     QList<Vector3*> getSurroundingVertices(const GridPoint &coordinate);
-    void draw(GLuint texID, float displace);
+    void draw(GLuint texID);
 //    void drawNormals();
     inline int getIndex(const GridPoint &c);
     inline int getIndex(int row, int column);

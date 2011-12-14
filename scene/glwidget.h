@@ -49,7 +49,6 @@ protected:
     void applyPerspectiveCamera(float width, float height);
     void renderTexturedQuad(int width, int height, bool flip);
     void renderScene();
-    void renderTerrain();
     void renderSkybox(Vector3 eye);
     void paintText();
 
