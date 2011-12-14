@@ -239,26 +239,6 @@ void GLWidget::paintGL()
     int width = this->width();
     int height = this->height();
 
-    // render the terrain to a framebuffer, and
-    // copy the resulting depth buffer to a texture
-    m_framebufferObjects["fbo_1"]->bind();
-    applyPerspectiveCamera(width, height);
-    renderTerrain();
-
-    // Make the texture we just created the new active texture
-    glBindTexture(GL_TEXTURE_2D, m_depthTex);
-
-    // Set filtering options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Set coordinate wrapping options
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 0, 0, this->width(), this->height(), 1);
-
-    m_framebufferObjects["fbo_1"]->release();
 
     // Render the scene to a framebuffer
     m_framebufferObjects["fbo_0"]->bind();
@@ -291,36 +271,6 @@ void GLWidget::paintGL()
     paintText();
 }
 
-/*!
- * Renders only the terrain, with no grass. Useful for
- * getting a good depth buffer
- */
-void GLWidget::renderTerrain()
-{
-    // Enable depth testing
-    glEnable(GL_DEPTH_TEST);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
-    // Enable cube maps and draw the skybox
-    glEnable(GL_TEXTURE_CUBE_MAP);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMap);
-    renderSkybox(m_camera.eye);
-
-    // Enable culling (back) faces for rendering the dragon
-    glEnable(GL_CULL_FACE);
-
-    glDisable(GL_TEXTURE_CUBE_MAP);
-
-    // draw terrain
-    m_map->draw(m_soilTex, 3.0);
-
-    // Disable culling, depth testing and cube maps
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
-    glBindTexture(GL_TEXTURE_CUBE_MAP,0);
-    glBindTexture(GL_TEXTURE_2D,0);
-    glDisable(GL_TEXTURE_CUBE_MAP);
-}
 
 /**
   Renders the scene.  May be called multiple times by paintGL() if necessary.
@@ -341,7 +291,7 @@ void GLWidget::renderScene() {
     glDisable(GL_TEXTURE_CUBE_MAP);
 
     // draw terrain
-    m_map->draw(m_soilTex, 0.0);
+    m_map->draw(m_soilTex   );
 
     // draw grass on top of terrain
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
