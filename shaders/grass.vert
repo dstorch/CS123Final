@@ -14,8 +14,7 @@ void main()
 	dir = normalize(dir);
 	float perturbation = sin(4 * distance + curTime);
 	
-	vertex.x += perturbation * dir.x;
-	vertex.z += perturbation * dir.z;
+	vertex.xz += perturbation * dir.xz;
     }
     
     gl_Position = gl_ModelViewProjectionMatrix * vertex;
