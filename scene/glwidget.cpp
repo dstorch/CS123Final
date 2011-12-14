@@ -301,6 +301,9 @@ void GLWidget::renderScene() {
 
     m_shaderPrograms["grass"]->setUniformValue("curTime", (GLfloat) m_timeCounter);
 
+    QVector3D eye = QVector3D(m_camera.eye.x, m_camera.eye.y, m_camera.eye.z);
+    m_shaderPrograms["grass"]->setUniformValue("eye", eye);
+
     m_field.draw(m_grassTex, m_camera.eye);
     m_shaderPrograms["grass"]->release();
 

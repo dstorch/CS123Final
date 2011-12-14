@@ -1,10 +1,11 @@
 uniform float curTime;
+varying vec4 vertex;
 
 void main()
 {
     gl_TexCoord[0] = gl_MultiTexCoord0;    
     
-    vec4 vertex = gl_Vertex;
+    vertex = gl_Vertex;
     
     if (vertex.y > 0.5) {
 	
