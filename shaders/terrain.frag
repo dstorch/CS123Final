@@ -1,4 +1,4 @@
-uniform sampler2D grassTexture;
+uniform sampler2D groundTexture;
 uniform vec3 eye;
 varying vec4 vertex;
 
@@ -6,7 +6,7 @@ vec4 fogColor = vec4(0.7, 0.7, 0.7, 1.0);
 
 void main()
 {
-    vec4 sampleGrass = texture2D(grassTexture, gl_TexCoord[0].st);
+    vec4 sampleGround = texture2D(groundTexture, gl_TexCoord[0].st);
     
     vec4 vertexWorld = gl_ModelViewMatrix * vertex;
     
@@ -16,12 +16,7 @@ void main()
     
     float blend = min(1.0, max(0.0, distance));
     
-    vec4 color = (1.0 - blend) * sampleGrass + blend * fogColor;
-    
-    if (sampleGrass.r > 0.4)
-    {
-	color.a = 0.0;
-    }
+    vec4 color = (1.0 - blend) * sampleGround + blend * fogColor;
     
     gl_FragColor = color;
-}     
+}

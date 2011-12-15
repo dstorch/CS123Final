@@ -65,7 +65,7 @@ GLWidget::~GLWidget()
         delete fbo;
     glDeleteLists(m_skybox, 1);
     const_cast<QGLContext *>(context())->deleteTexture(m_cubeMap);
-    glmDelete(m_dragon.model);
+    glmDelete(m_cow.model);
 }
 
 /**
@@ -111,7 +111,7 @@ void GLWidget::initializeResources()
     m_depthTex = 0;
     glGenTextures(1, &m_depthTex);
 
-    m_dragon = ResourceLoader::loadObjModel("models/xyzrgb_dragon.obj");
+    m_cow = ResourceLoader::loadObjModel("models/cow.obj");
     cout << "Loaded dragon..." << endl;
 
     loadCubeMap();
@@ -154,7 +154,7 @@ void GLWidget::createShaderPrograms()
 
     m_shaderPrograms["fog"] = ResourceLoader::newShaderProgram(ctx, "shaders/fog.vert", "shaders/fog.frag");
 
-    m_shaderPrograms["sky"] = ResourceLoader::newShaderProgram(ctx, "shaders/sky.vert", "shaders/sky.frag");
+    m_shaderPrograms["terrain"] = ResourceLoader::newShaderProgram(ctx, "shaders/terrain.vert", "shaders/terrain.frag");
 }
 
 /**
@@ -223,7 +223,6 @@ QVector4D GLWidget::windowToFilm(int x, int y, int width, int height)
     return QVector4D(xfilm, yfilm, -1.0, 1.0);
 }
 
-
 /**
   Draws the scene to a buffer which is rendered to the screen when this function exits.
  **/
@@ -246,6 +245,7 @@ void GLWidget::paintGL()
     renderScene();
     m_framebufferObjects["fbo_0"]->release();
 
+    // Bloom lighting:
     // Copy the rendered scene into framebuffer 1
     m_framebufferObjects["fbo_0"]->blitFramebuffer(m_framebufferObjects["fbo_1"],
                                                    QRect(0, 0, width, height), m_framebufferObjects["fbo_0"],
@@ -265,9 +265,7 @@ void GLWidget::paintGL()
     glBindTexture(GL_TEXTURE_2D, 0);
     m_framebufferObjects["fbo_2"]->release();
 
-    // TODO: Uncomment this section in step 2 of the lab
-
-    float scales[] = {4.f,8.f,16.f,32.f};
+    float scales[] = {4.f,8.f,16.f,32.f,64.f};
     for (int i = 0; i < 4; ++i)
     {
         // Render the blurred brightpass filter result to fbo 1
@@ -309,8 +307,29 @@ void GLWidget::renderScene() {
 
     glDisable(GL_TEXTURE_CUBE_MAP);
 
+    // cow!
+    /*glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(0.f, 1.0, 0.f);
+    glCallList(m_cow.idx);
+    glPopMatrix();*/
+
+    QVector3D eye = QVector3D(m_camera.eye.x, m_camera.eye.y, m_camera.eye.z);
+
     // draw terrain
-    m_map->draw(m_soilTex   );
+    glBindTexture(GL_TEXTURE_2D, m_soilTex);
+    glActiveTexture(GL_TEXTURE0);
+
+    m_shaderPrograms["terrain"]->bind();
+
+    m_shaderPrograms["terrain"]->setUniformValue("groundTexture", GL_TEXTURE0);
+    m_shaderPrograms["terrain"]->setUniformValue("eye", eye);
+
+    m_map->draw(m_soilTex);
+
+    m_shaderPrograms["terrain"]->release();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     // draw grass on top of terrain
     glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
@@ -330,16 +349,15 @@ void GLWidget::renderScene() {
     QVector4D windDir(-1.0,0.0,0.0,0.0);
 
     m_shaderPrograms["grass"]->bind();
-    m_shaderPrograms["grass"]->setUniformValue("grassTex    ture", GL_TEXTURE0);
+    m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
 
     m_shaderPrograms["grass"]->setUniformValue("curTime", (GLfloat) m_timeCounter);
     m_shaderPrograms["grass"]->setUniformValue("windOrigin", windOrig);
     m_shaderPrograms["grass"]->setUniformValue("windDir", windDir);
-
-    QVector3D eye = QVector3D(m_camera.eye.x, m_camera.eye.y, m_camera.eye.z);
     m_shaderPrograms["grass"]->setUniformValue("eye", eye);
 
     m_field.draw(m_grassTex, m_camera.eye);
+
     m_shaderPrograms["grass"]->release();
 
     glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE_ARB);
