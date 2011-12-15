@@ -51,6 +51,7 @@ protected:
     void renderScene();
     void renderSkybox(Vector3 eye);
     void paintText();
+    void renderBlur(int width, int height);
 
     // used for wind effect click interaction
     QVector4D windowToFilm(int x, int y, int width, int height);
