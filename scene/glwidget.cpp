@@ -233,7 +233,8 @@ void GLWidget::paintGL()
 
     // Update the fps
     int time = m_clock.elapsed();
-    m_fps = 1000.f / (time - m_prevTime);
+    int deltaTime = time - m_prevTime;
+    m_fps = 1000.f / deltaTime;
     m_prevTime = time;
     int width = this->width();
     int height = this->height();
@@ -242,7 +243,7 @@ void GLWidget::paintGL()
     // Render the scene to a framebuffer
     m_framebufferObjects["fbo_0"]->bind();
     applyPerspectiveCamera(width, height);
-    renderScene();
+    renderScene(deltaTime);
     m_framebufferObjects["fbo_0"]->release();
 
     // Bloom lighting:
@@ -292,7 +293,7 @@ void GLWidget::paintGL()
 /**
   Renders the scene.  May be called multiple times by paintGL() if necessary.
 **/
-void GLWidget::renderScene() {
+void GLWidget::renderScene(int deltaTime) {
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -310,7 +311,7 @@ void GLWidget::renderScene() {
     // cow!
     /*glPushMatrix();
     glLoadIdentity();
-    glTranslatef(0.f, 1.0, 0.f);
+    glTranslatef(0.f, 20.0, 0.f);
     glCallList(m_cow.idx);
     glPopMatrix();*/
 
@@ -339,7 +340,8 @@ void GLWidget::renderScene() {
     glBindTexture(GL_TEXTURE_2D, m_grassTex);
     glActiveTexture(GL_TEXTURE0);
 
-    m_timeCounter -= SWAY_SPEED;
+    //cout << deltaTime << endl;
+    m_timeCounter -= SWAY_SPEED * (float) deltaTime;
     if (m_timeCounter <= 0.0)
     {
         m_timeCounter = 100.0;

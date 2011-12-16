@@ -11,7 +11,14 @@ void main()
     if (vertex.y > 0.5) {
 	
 	// constant sway
-	vec4 dir = gl_ModelViewMatrix * vertex - windOrigin; 
+	vec4 cDir = gl_ModelViewMatrix * vertex;
+	float cDistance = length(cDir);
+	cDir = normalize(cDir);
+	float cPerturbation = 0.5*sin(1.7*cDistance + 1.5*curTime);
+	vertex.xz += cPerturbation * cDir.xz;
+	
+	// click wave
+	/*vec4 dir = gl_ModelViewMatrix * vertex - windOrigin; 
 	//vec4 temp = vec4((float)(vertex.x - 0.0), (float)(vertex.y - 0.0), (float)(vertex.z - 0.0), (float)0.0);
 	//vec4 dir2 = gl_ModelViewMatrix * temp;
 
@@ -24,7 +31,7 @@ void main()
 	
 	float perturbation = 1.1*d*sin( distance*3/4 + curTime*1 )*dt;
 	
-	vertex.xz += perturbation * dir.xz;
+	vertex.xz += perturbation * dir.xz;*/
     }
     
     gl_Position = gl_ModelViewProjectionMatrix * vertex;

@@ -48,7 +48,7 @@ protected:
     void applyOrthogonalCamera(float width, float height);
     void applyPerspectiveCamera(float width, float height);
     void renderTexturedQuad(int width, int height, bool flip);
-    void renderScene();
+    void renderScene(int deltaTime);
     void renderSkybox(Vector3 eye);
     void paintText();
     void renderBlur(int width, int height);
@@ -67,7 +67,6 @@ private:
     // Resources
     QHash<QString, QGLShaderProgram *> m_shaderPrograms; // hash map of all shader programs
     QHash<QString, QGLFramebufferObject *> m_framebufferObjects; // hash map of all framebuffer objects
-    Model m_cow; // cow model
     GLuint m_skybox; // skybox call list ID
     GLuint m_cubeMap; // cubeMap texture ID
     QFont m_font; // font for rendering text
@@ -81,6 +80,8 @@ private:
 
     HeightMap* m_map;
     GrassField m_field;
+
+    Model m_cow; // cow model
 
 };
 

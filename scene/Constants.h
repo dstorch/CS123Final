@@ -17,7 +17,7 @@
 #define CAM_WHEEL_SENSITIVITY 80.0
 
 // swaying grass animation parameters
-#define SWAY_SPEED 0.15
+#define SWAY_SPEED 0.001
 
 #define CLUSTERS_PER_PATCH 4
 #define PATCH_SIZE 2
