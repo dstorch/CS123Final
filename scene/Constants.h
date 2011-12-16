@@ -33,6 +33,9 @@ struct Constants
     float a;
 
     float clustersPerPatch;
+
+    float perturbationWaveAmplitude;
+    float ambientWaveAmplitude;
 };
 
 extern Constants constants;

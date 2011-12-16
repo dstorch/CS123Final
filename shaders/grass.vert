@@ -2,6 +2,8 @@ uniform float curTime;
 uniform vec4 windOrigin;
 uniform vec4 windDir;
 uniform float windTime;
+uniform float ambientWaveAmplitude;
+uniform float perturbationWaveAmplitude;
 
 void main()
 {
@@ -15,7 +17,7 @@ void main()
 	vec4 cDir = gl_ModelViewMatrix * vertex;
 	float cDistance = length(cDir);
 	cDir = normalize(cDir);
-	float cPerturbation = 0.4*sin(1.7*cDistance + 1.5*curTime);
+	float cPerturbation = ambientWaveAmplitude*sin(1.7*cDistance + 1.5*curTime);
 	vertex.xz += cPerturbation * cDir.xz;
 	
 	// click wave
@@ -31,7 +33,7 @@ void main()
 	float timeAtt = pow((windTime / 100.0), 4);
 	// 10/dist is good for amplitude alone
 	
-	float perturbation = 5.0*d*timeAtt*sin( distance*3/4 + curTime*1 )*dt;
+	float perturbation = perturbationWaveAmplitude*d*timeAtt*sin( distance*3/4 + curTime*1 )*dt;
 	
 	vertex.xz += perturbation * dir.xz;
     }

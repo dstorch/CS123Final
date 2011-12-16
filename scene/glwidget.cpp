@@ -361,6 +361,10 @@ void GLWidget::renderScene(int deltaTime) {
     m_shaderPrograms["grass"]->setUniformValue("eye", eye);
     m_shaderPrograms["grass"]->setUniformValue("windTime", (GLfloat) m_windTime);
 
+    m_shaderPrograms["grass"]->setUniformValue("ambientWaveAmplitude", (GLfloat) constants.ambientWaveAmplitude);
+    m_shaderPrograms["grass"]->setUniformValue("perturbationWaveAmplitude", (GLfloat) constants.perturbationWaveAmplitude);
+
+
     m_field.draw(m_grassTex, m_camera.eye);
 
     m_shaderPrograms["grass"]->release();
@@ -507,12 +511,12 @@ void GLWidget::spawnWind(int xclick, int yclick)
     Vector3 dir(-Vector3::fromAngles(m_camera.theta, m_camera.phi));
     m_windDir = QVector4D(dir.x, dir.y, dir.z, 0.0);
 
-    cout << "(x, y): " << xclick << ", " << yclick << endl;
-    cout << "(theta, phi): " << theta << ", " << phi << endl;
-    cout << "(dx, dy): " << dx << ", " << dy << endl;
-    cout << "(halfx, halfy): " << halfx << ", " << halfy << endl;
-    cout << "eye: "<< m_camera.eye << endl;
-    cout << m_windOrigin.x() << ", " << m_windOrigin.y() << ", " << m_windOrigin.z() << endl;
+//    cout << "(x, y): " << xclick << ", " << yclick << endl;
+//    cout << "(theta, phi): " << theta << ", " << phi << endl;
+//    cout << "(dx, dy): " << dx << ", " << dy << endl;
+//    cout << "(halfx, halfy): " << halfx << ", " << halfy << endl;
+//    cout << "eye: "<< m_camera.eye << endl;
+//    cout << m_windOrigin.x() << ", " << m_windOrigin.y() << ", " << m_windOrigin.z() << endl;
 }
 
 /**
@@ -615,6 +619,18 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
+    case Qt::Key_U:
+        constants.ambientWaveAmplitude += .1;
+        break;
+    case Qt::Key_I:
+        constants.ambientWaveAmplitude -= .1;
+        break;
+    case Qt::Key_J:
+        constants.perturbationWaveAmplitude += 1.0;
+        break;
+    case Qt::Key_K:
+        constants.perturbationWaveAmplitude -= 1.0;
+        break;
     case Qt::Key_W:
         m_camera.moveForward(CAM_TRANSLATE_SPEED);
         break;
@@ -682,6 +698,8 @@ void GLWidget::paintText()
     renderText(10, 20, "FPS: " + QString::number((int) (m_prevFps)), m_font);
     renderText(10, 35, "M/L: more or less grass", m_font);
     renderText(10, 50, "Up/Down: more or less hilly", m_font);
+    renderText(10, 65, "U/I: more or less ambient wave", m_font);
+    renderText(10, 80, "J/K: more or less click perturbation", m_font);
 
     glColor3f(1.f, 1.f, 1.f);
 }
