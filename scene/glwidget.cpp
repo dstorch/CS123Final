@@ -506,13 +506,6 @@ void GLWidget::spawnWind(int xclick, int yclick)
 
     Vector3 dir(-Vector3::fromAngles(m_camera.theta, m_camera.phi));
     m_windDir = QVector4D(dir.x, dir.y, dir.z, 0.0);
-
-    cout << "(x, y): " << xclick << ", " << yclick << endl;
-    cout << "(theta, phi): " << theta << ", " << phi << endl;
-    cout << "(dx, dy): " << dx << ", " << dy << endl;
-    cout << "(halfx, halfy): " << halfx << ", " << halfy << endl;
-    cout << "eye: "<< m_camera.eye << endl;
-    cout << m_windOrigin.x() << ", " << m_windOrigin.y() << ", " << m_windOrigin.z() << endl;
 }
 
 /**
