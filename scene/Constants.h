@@ -18,6 +18,7 @@
 
 // swaying grass animation parameters
 #define SWAY_SPEED 0.001
+#define TIME_ATT 0.025
 
 #define CLUSTERS_PER_PATCH 4
 #define PATCH_SIZE 2

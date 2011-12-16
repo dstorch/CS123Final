@@ -55,6 +55,7 @@ protected:
 
     // used for wind effect click interaction
     QVector4D windowToFilm(int x, int y, int width, int height);
+    void spawnWind(int xclick, int yclick);
 
 private:
     QTimer m_timer;
@@ -77,6 +78,9 @@ private:
 
     // wind effect
     float m_timeCounter;
+    QVector4D m_windOrigin;
+    QVector4D m_windDir;
+    float m_windTime;
 
     HeightMap* m_map;
     GrassField m_field;

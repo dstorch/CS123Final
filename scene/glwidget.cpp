@@ -340,23 +340,26 @@ void GLWidget::renderScene(int deltaTime) {
     glBindTexture(GL_TEXTURE_2D, m_grassTex);
     glActiveTexture(GL_TEXTURE0);
 
-    //cout << deltaTime << endl;
     m_timeCounter -= SWAY_SPEED * (float) deltaTime;
     if (m_timeCounter <= 0.0)
     {
         m_timeCounter = 100.0;
     }
 
-    QVector4D windOrig(50.0,0.0,50.0,0.0);
-    QVector4D windDir(-1.0,0.0,0.0,0.0);
+    m_windTime -= TIME_ATT * (float) deltaTime;
+    if (m_windTime <= 0.0)
+    {
+        m_windTime = 0.0;
+    }
 
     m_shaderPrograms["grass"]->bind();
     m_shaderPrograms["grass"]->setUniformValue("grassTexture", GL_TEXTURE0);
 
     m_shaderPrograms["grass"]->setUniformValue("curTime", (GLfloat) m_timeCounter);
-    m_shaderPrograms["grass"]->setUniformValue("windOrigin", windOrig);
-    m_shaderPrograms["grass"]->setUniformValue("windDir", windDir);
+    m_shaderPrograms["grass"]->setUniformValue("windOrigin", m_windOrigin);
+    m_shaderPrograms["grass"]->setUniformValue("windDir", m_windDir);
     m_shaderPrograms["grass"]->setUniformValue("eye", eye);
+    m_shaderPrograms["grass"]->setUniformValue("windTime", (GLfloat) m_windTime);
 
     m_field.draw(m_grassTex, m_camera.eye);
 
@@ -459,10 +462,57 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     switch(event->button())
     {
     case Qt::RightButton:
+        spawnWind(event->x(), event->y());
         break;
     default:
         break;
     }
+}
+
+void GLWidget::spawnWind(int xclick, int yclick)
+{
+    m_windTime = 100.0;
+
+    int xcenter = this->width() / 2;
+    int ycenter = this->height() / 2;
+    float ratio = ((float) this->width()) / this->height();
+
+    float halfy = m_camera.fovy / 2.0;
+
+    float dx = (float) (xclick - xcenter);
+    float dy = (float) (yclick - ycenter);
+
+    float halfx = (m_camera.fovy * ratio) / 2.0;
+
+    halfx *= (M_PI / 180.0);
+    halfy *= (M_PI / 180.0);
+
+    //float theta = m_camera.theta + dx * halfx;
+    //float phi = m_camera.phi + dy * halfy;
+
+    float deltaPhi = atan(((float) dy / (float) ycenter) * tan(halfy));
+    float deltaTheta = atan(((float) dx / (float) xcenter) * tan(halfx));
+
+    float phi = m_camera.phi + deltaPhi;
+    float theta = m_camera.theta + deltaTheta;
+
+    Vector3 windLook(-Vector3::fromAngles(theta, phi));
+
+    float t = -1.0 * (m_camera.eye.y / windLook.y);
+
+    Vector3 worldPoint = m_camera.eye + t * windLook;
+
+    m_windOrigin = QVector4D(worldPoint.x, worldPoint.y, worldPoint.z, 1.0);
+
+    Vector3 dir(-Vector3::fromAngles(m_camera.theta, m_camera.phi));
+    m_windDir = QVector4D(dir.x, dir.y, dir.z, 0.0);
+
+    cout << "(x, y): " << xclick << ", " << yclick << endl;
+    cout << "(theta, phi): " << theta << ", " << phi << endl;
+    cout << "(dx, dy): " << dx << ", " << dy << endl;
+    cout << "(halfx, halfy): " << halfx << ", " << halfy << endl;
+    cout << "eye: "<< m_camera.eye << endl;
+    cout << m_windOrigin.x() << ", " << m_windOrigin.y() << ", " << m_windOrigin.z() << endl;
 }
 
 /**
