@@ -1,3 +1,11 @@
+/*!
+   @file   grasscluster.h
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #ifndef GRASSCLUSTER_H
 #define GRASSCLUSTER_H
 

@@ -44,8 +44,8 @@ m_font("Deja Vu Sans Mono", 8, 4)
     m_camera.fovy = 60.f;
     m_camera.heightmap = m_map;
 
-    m_field = GrassField(m_map);
-    m_field.makeField();
+    m_field = new GrassField(m_map);
+    m_field->makeField();
 
     m_camera.keepAboveTerrain();
 
@@ -66,6 +66,9 @@ GLWidget::~GLWidget()
     glDeleteLists(m_skybox, 1);
     const_cast<QGLContext *>(context())->deleteTexture(m_cubeMap);
     glmDelete(m_cow.model);
+
+    delete m_map;
+    delete m_field;
 }
 
 /**
@@ -343,7 +346,7 @@ void GLWidget::renderScene(int deltaTime) {
     m_timeCounter -= SWAY_SPEED * (float) deltaTime;
     if (m_timeCounter <= 0.0)
     {
-        m_timeCounter = 100.0;
+        m_timeCounter = INITIAL_TIME;
     }
 
     m_windTime -= TIME_ATT * (float) deltaTime;
@@ -361,7 +364,11 @@ void GLWidget::renderScene(int deltaTime) {
     m_shaderPrograms["grass"]->setUniformValue("eye", eye);
     m_shaderPrograms["grass"]->setUniformValue("windTime", (GLfloat) m_windTime);
 
-    m_field.draw(m_grassTex, m_camera.eye);
+    m_shaderPrograms["grass"]->setUniformValue("ambientWaveAmplitude", (GLfloat) constants.ambientWaveAmplitude);
+    m_shaderPrograms["grass"]->setUniformValue("perturbationWaveAmplitude", (GLfloat) constants.perturbationWaveAmplitude);
+
+
+    m_field->draw(m_grassTex, m_camera.eye);
 
     m_shaderPrograms["grass"]->release();
 
@@ -471,7 +478,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 
 void GLWidget::spawnWind(int xclick, int yclick)
 {
-    m_windTime = 100.0;
+    m_windTime = INITIAL_TIME;
 
     int xcenter = this->width() / 2;
     int ycenter = this->height() / 2;
@@ -608,6 +615,18 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
 {
     switch(event->key())
     {
+    case Qt::Key_U:
+        constants.ambientWaveAmplitude += .1;
+        break;
+    case Qt::Key_I:
+        constants.ambientWaveAmplitude -= .1;
+        break;
+    case Qt::Key_J:
+        constants.perturbationWaveAmplitude += 1.0;
+        break;
+    case Qt::Key_K:
+        constants.perturbationWaveAmplitude -= 1.0;
+        break;
     case Qt::Key_W:
         m_camera.moveForward(CAM_TRANSLATE_SPEED);
         break;
@@ -626,8 +645,8 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
             m_map->resetMap();
             m_map->generateMap();
             m_map->computeNormals();
-            m_field.clearField();
-            m_field.makeField();
+            m_field->clearField();
+            m_field->makeField();
             m_camera.keepAboveTerrain();
         }
         break;
@@ -637,16 +656,16 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
             m_map->resetMap();
             m_map->generateMap();
             m_map->computeNormals();
-            m_field.clearField();
-            m_field.makeField();
+            m_field->clearField();
+            m_field->makeField();
             m_camera.keepAboveTerrain();
         }
         break;
     case Qt::Key_M:
-        m_field.denser();
+        m_field->denser();
         break;
     case Qt::Key_L:
-        m_field.lessDense();
+        m_field->lessDense();
         break;
     case Qt::Key_P:
         QImage qi = grabFrameBuffer(false);
@@ -675,6 +694,8 @@ void GLWidget::paintText()
     renderText(10, 20, "FPS: " + QString::number((int) (m_prevFps)), m_font);
     renderText(10, 35, "M/L: more or less grass", m_font);
     renderText(10, 50, "Up/Down: more or less hilly", m_font);
+    renderText(10, 65, "U/I: more or less ambient wave", m_font);
+    renderText(10, 80, "J/K: more or less click perturbation", m_font);
 
     glColor3f(1.f, 1.f, 1.f);
 }

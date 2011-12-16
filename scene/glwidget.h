@@ -1,3 +1,11 @@
+/*!
+   @file   glwidget.h
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
@@ -83,7 +91,7 @@ private:
     float m_windTime;
 
     HeightMap* m_map;
-    GrassField m_field;
+    GrassField* m_field;
 
     Model m_cow; // cow model
 

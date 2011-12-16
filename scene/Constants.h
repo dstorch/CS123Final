@@ -1,3 +1,11 @@
+/*!
+   @file   Constants.h
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
@@ -19,6 +27,7 @@
 // swaying grass animation parameters
 #define SWAY_SPEED 0.001
 #define TIME_ATT 0.025
+#define INITIAL_TIME 100.53096148 // 32 * pi
 
 #define CLUSTERS_PER_PATCH 4
 #define PATCH_SIZE 2
@@ -33,6 +42,9 @@ struct Constants
     float a;
 
     float clustersPerPatch;
+
+    float perturbationWaveAmplitude;
+    float ambientWaveAmplitude;
 };
 
 extern Constants constants;

@@ -1,3 +1,11 @@
+/*!
+   @file   HeightMap.h
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #ifndef HEIGHTMAP_H
 #define HEIGHTMAP_H
 
@@ -34,7 +42,7 @@ public:
 
     QList<Vector3*> getSurroundingVertices(const GridPoint &coordinate);
     void draw(GLuint texID);
-//    void drawNormals();
+
     inline int getIndex(const GridPoint &c);
     inline int getIndex(int row, int column);
 

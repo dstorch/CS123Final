@@ -96,9 +96,17 @@ Scene parameters:
   within the patch. By arranging the clusters
   into regular patches, we ensure that the
   whole field is covered; by randomizing within
-  a patch, we  
+  a patch, we avoid neat rows of grass.
 
-  In order to produce rolling hills, rather
-  than the mountainous terrain produced by
-  recursive vertex perturbation
+4. Grass motion
+  The motion is implemented using a sinusoidal
+  function of time and distance. We also divide
+  by distance so that the wave is weaker as it
+  moves out from its epicenter. For directed
+  wind, we take the dot product of the wind
+  direction and the vector from the epicenter
+  to the cluster. Multiplying by this dot
+  product means that the strongest perturbations
+  are those which align directly with the wind
+  direction. 
 

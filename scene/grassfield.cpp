@@ -17,7 +17,7 @@ GrassField::~GrassField()
 {
     for (vector<GrassPatch*>::iterator it = m_patches.begin(); it != m_patches.end(); ++it)
     {
-        //delete *it;
+        delete *it;
     }
 }
 

@@ -1,8 +1,10 @@
-//#define HILLS 50.0
-//#define RADII 1000.0
-//#define SIGMA2X 50.0
-//#define SIGMA2Y 50.0
-//#define A 4.0
+/*!
+   @file   HeightMap.h
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
 
 #include "HeightMap.h"
 #include <stdlib.h>
@@ -142,14 +144,6 @@ int HeightMap::height()
 
 float HeightMap::getFromHeightMap(int row, int col)
 {
-    //    if( row < 0 )
-    //        cout << "requested row : " << row << " less than 0" << endl;
-    //    if( row >= m_rows )
-    //        cout << "requested row : " << row << " greater than m_rows : " << m_rows << endl;
-    //    if( col < 0 )
-    //        cout << "requested col : " << col << " less than 0" << endl;
-    //    if( col >= m_cols )
-    //        cout << "requested col : " << col << " greater than m_cols : " << m_cols << endl;
     return m_map[row][col];
 }
 

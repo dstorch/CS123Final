@@ -20,8 +20,6 @@ HEADERS += scene/glwidget.h \
     support/camera.h \
     lib/targa.h \
     scene/grasscluster.h \
-    math/matrix.h \
-    math/matrix.inl \
     scene/grasspatch.h \
     scene/HeightMap.h \
     scene/grassfield.h \

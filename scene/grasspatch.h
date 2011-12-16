@@ -1,3 +1,11 @@
+/*!
+   @file   grasspatch.h
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #ifndef GRASSPATCH_H
 #define GRASSPATCH_H
 
