@@ -17,8 +17,6 @@ public:
     GLfloat** generateMap();
     void addHill(int x, int z);
 
-    void computeNormals();
-
     void resetMap();
 
     bool moreHills();
@@ -30,7 +28,6 @@ public:
     int width();
     int height();
     float getFromHeightMap(int row, int col);
-    Vector3* getNormal(int row, int col);
 
     QList<Vector3*> getSurroundingVertices(const GridPoint &coordinate);
     void draw(GLuint texID);
@@ -40,7 +37,6 @@ public:
 
 private:
     GLfloat** m_map;
-    Vector3** m_normalMap;
     int m_rows;
     int m_cols;
 };

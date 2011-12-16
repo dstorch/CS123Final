@@ -36,7 +36,6 @@ m_font("Deja Vu Sans Mono", 8, 4)
 
     m_map = new HeightMap(TERRAIN_HEIGHT, TERRAIN_WIDTH);
     m_map->generateMap();
-    m_map->computeNormals();
 
     m_camera.eye = Vector3(0.f, 10.f, 0.f);
     m_camera.up = Vector3(0.f, 1.f, 0.f);
@@ -620,16 +619,16 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
     switch(event->key())
     {
     case Qt::Key_U:
-        constants.ambientWaveAmplitude += .1;
+        constants.ambientWaveAmplitude = min( constants.ambientWaveAmplitude+.1, 4.0);
         break;
     case Qt::Key_I:
-        constants.ambientWaveAmplitude -= .1;
+        constants.ambientWaveAmplitude = max( constants.ambientWaveAmplitude - .1, 0.0);
         break;
     case Qt::Key_J:
-        constants.perturbationWaveAmplitude += 1.0;
+        constants.perturbationWaveAmplitude = min(constants.perturbationWaveAmplitude + 1.0, 10.0 );
         break;
     case Qt::Key_K:
-        constants.perturbationWaveAmplitude -= 1.0;
+        constants.perturbationWaveAmplitude = max( constants.perturbationWaveAmplitude - 1.0, 0.0);
         break;
     case Qt::Key_W:
         m_camera.moveForward(CAM_TRANSLATE_SPEED);
@@ -648,7 +647,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         {
             m_map->resetMap();
             m_map->generateMap();
-            m_map->computeNormals();
             m_field.clearField();
             m_field.makeField();
             m_camera.keepAboveTerrain();
@@ -659,7 +657,6 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         {
             m_map->resetMap();
             m_map->generateMap();
-            m_map->computeNormals();
             m_field.clearField();
             m_field.makeField();
             m_camera.keepAboveTerrain();
