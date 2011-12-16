@@ -29,16 +29,16 @@ HeightMap::HeightMap(int rows, int cols)
         m_map[i] = new GLfloat[rows];
     }
 
-    //setup for the normal map
-    m_normalMap = new Vector3*[rows*cols];
-
     resetMap();
 }
 
 HeightMap::~HeightMap()
 {
-    // TODO: cleanup the newed m_map array, a 1D vector of GLfloat*
-    // TODO: cleanup the newed m_normalMap array, a 1D array of Vector3*
+    for(int i=0; i<m_rows; i++)
+    {
+        delete[] m_map[i];
+    }
+    delete[] m_map;
 }
 
 bool HeightMap::moreHills()
@@ -78,7 +78,6 @@ void HeightMap::resetMap()
         for( int j=0; j<m_cols; j++)
         {
             m_map[i][j] = 0.0;
-            m_normalMap[i*m_cols + j] = new Vector3(0.0, 0.0, 0.0);
         }
     }
 }
@@ -145,57 +144,6 @@ int HeightMap::height()
 float HeightMap::getFromHeightMap(int row, int col)
 {
     return m_map[row][col];
-}
-
-void HeightMap::computeNormals()
-{
-    // For each vertex in the 2D grid...
-    for (int row = 0; row < m_rows; row++)
-    {
-        for (int column = 0; column < m_cols; column++)
-        {
-            const GridPoint gridPosition(row, column);                // 2D coordinate of the vertex on the terrain grid
-            const int terrainIndex = getIndex(gridPosition);          // Index into the 1D position and normal arrays
-            const Vector3& vertexPosition  = Vector3( column, m_map[row][column], row); // Position of the vertex
-
-            // Get the neighbors of the vertex at (a,b)
-            const QList<Vector3*>& neighbors = getSurroundingVertices(gridPosition);
-            int numNeighbors = neighbors.size();
-
-            // @TODO: [Lab 5] Compute a list of vectors from vertexPosition to each neighbor in neighbors
-            Vector3 *offsets = new Vector3[numNeighbors];
-            for (int i = 0; i < numNeighbors; ++i)
-            {
-                offsets[i] = Vector3(0.0, 0.0, 0.0);
-                offsets[i] = *neighbors.at(i)- (vertexPosition);
-            }
-
-            // @TODO: [Lab 5] Compute cross products for each neighbor
-            Vector3 *normals = new Vector3[numNeighbors];
-            for (int i = 0; i < numNeighbors; ++i)
-            {
-                normals[i] = Vector3(0.0, 0.0, 0.0);
-                normals[i] = offsets[i].cross(offsets[(i+1) % numNeighbors]);
-            }
-
-            // Average the normals and store the final value in the normal map
-            Vector3 sum = Vector3(0.0, 0.0, 0.0);
-            for (int i = 0; i < numNeighbors; ++i)
-                sum += normals[i];
-            sum.normalize();
-            m_normalMap[terrainIndex]->x = sum.x;
-            m_normalMap[terrainIndex]->y = sum.y;
-            m_normalMap[terrainIndex]->z = sum.z;
-
-            delete[] offsets;
-            delete[] normals;
-        }
-    }
-}
-
-Vector3* HeightMap::getNormal(int row, int col)
-{
-    return m_normalMap[row*m_cols + col];
 }
 
 QList<Vector3*> HeightMap::getSurroundingVertices(const GridPoint &coordinate)
@@ -272,7 +220,6 @@ void HeightMap::draw(GLuint texID)
         glBegin(GL_TRIANGLE_STRIP);
         for(int j=0; j<m_cols; j++)
         {
-            glNormal3fv( m_normalMap[getIndex(i,j)]->xyz );
             glTexCoord2f((float)i/(float)m_cols, (float)j/(float)m_rows);
             glVertex3fv(Vector3(j - m_rows/2, m_map[i][j], i - m_cols/2).xyz); // NoteToSelf : added a centering offset
             glTexCoord2f((float)(i+1)/(float)m_cols, (float)j/(float)m_rows);
