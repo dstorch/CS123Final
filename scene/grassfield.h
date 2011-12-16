@@ -14,6 +14,15 @@
 #include "Constants.h"
 #include <vector>
 
+/**
+
+ @class GrassField
+
+ @brief The highest-level data structure
+ for grass cluster objects. Consists of a
+ vector of GrassPatch objects.
+
+**/
 class GrassField
 {
 public:

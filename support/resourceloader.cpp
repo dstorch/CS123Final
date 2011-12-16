@@ -1,10 +1,17 @@
+/*!
+   @file   resourceloader.cpp
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #include "resourceloader.h"
 
 #include <QGLShaderProgram>
 #include <QList>
 #include <QString>
 #include "glm.h"
-
 
 /**
   Loads the cube map into video memory.

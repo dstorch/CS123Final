@@ -1,3 +1,11 @@
+/*!
+   @file   glwidget.cpp
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #include "glwidget.h"
 
 #include <iostream>
@@ -49,6 +57,7 @@ m_font("Deja Vu Sans Mono", 8, 4)
     m_camera.keepAboveTerrain();
 
     m_timeCounter = 0.0;
+    m_windTime = 0.0;
 
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(update()));
 }
@@ -65,6 +74,9 @@ GLWidget::~GLWidget()
     glDeleteLists(m_skybox, 1);
     const_cast<QGLContext *>(context())->deleteTexture(m_cubeMap);
     glmDelete(m_cow.model);
+
+    const_cast<QGLContext *>(context())->deleteTexture(m_grassTex);
+    const_cast<QGLContext *>(context())->deleteTexture(m_soilTex);
 
     delete m_map;
     delete m_field;
@@ -110,9 +122,6 @@ void GLWidget::initializeResources()
     m_grassTex = ResourceLoader::loadTexture(QString("textures/grass2.jpg"));
     m_soilTex = ResourceLoader::loadTexture(QString("textures/soil.jpg"));
 
-    m_depthTex = 0;
-    glGenTextures(1, &m_depthTex);
-
     m_cow = ResourceLoader::loadObjModel("models/cow.obj");
     cout << "Loaded dragon..." << endl;
 
@@ -141,6 +150,11 @@ void GLWidget::loadCubeMap()
     fileList.append(new QFile("textures/sky/front.jpg"));
     fileList.append(new QFile("textures/sky/back.jpg"));
     m_cubeMap = ResourceLoader::loadCubeMap(fileList);
+
+    for (QList<QFile*>::iterator it = fileList.begin(); it != fileList.end(); ++it)
+    {
+        delete *it;
+    }
 }
 
 /**
@@ -216,13 +230,6 @@ void GLWidget::applyPerspectiveCamera(float width, float height)
               m_camera.up.x, m_camera.up.y, m_camera.up.z);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-}
-
-QVector4D GLWidget::windowToFilm(int x, int y, int width, int height)
-{
-    float xfilm = ((2 * x) / (float) width) - 1.0;
-    float yfilm = 1.0 - ((2 * y) / (float) height);
-    return QVector4D(xfilm, yfilm, -1.0, 1.0);
 }
 
 /**
@@ -382,6 +389,12 @@ void GLWidget::renderScene(int deltaTime) {
     glDisable(GL_TEXTURE_CUBE_MAP);
 }
 
+/*!
+ * Draw the skybox, always keeping it centered
+ * around the camera.
+ *
+ * @param eye - the current eye position of the camera
+ */
 void GLWidget::renderSkybox(Vector3 eye)
 {
     glBegin(GL_QUADS);
@@ -475,6 +488,14 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
     }
 }
 
+/*!
+ * Compute the world space point from which the wind originates
+ * and the direction of the wind. Wind direction is based on the
+ * current look vector.
+ *
+ * @param xclick - the x-coordinate of the mouse click
+ * @param yclick - the y-coordinate of the mouse click
+ */
 void GLWidget::spawnWind(int xclick, int yclick)
 {
     m_windTime = INITIAL_TIME;
@@ -492,9 +513,6 @@ void GLWidget::spawnWind(int xclick, int yclick)
 
     halfx *= (M_PI / 180.0);
     halfy *= (M_PI / 180.0);
-
-    //float theta = m_camera.theta + dx * halfx;
-    //float phi = m_camera.phi + dy * halfy;
 
     float deltaPhi = atan(((float) dy / (float) ycenter) * tan(halfy));
     float deltaTheta = atan(((float) dx / (float) xcenter) * tan(halfx));

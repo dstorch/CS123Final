@@ -1,3 +1,10 @@
+/*!
+   @file   grasspatch.cpp
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
 
 #include "grasspatch.h"
 
@@ -23,6 +30,13 @@ Vector2 GrassPatch::randomXZ()
     return Vector2(outx, outz);
 }
 
+/*!
+ * Populate this patch with clusters. Random number
+ * generation is done here.
+ *
+ * @param numClusters - the number of clusters to
+ *   put inside the patch
+ */
 void GrassPatch::generateRandomClusters(int numClusters)
 {
     for (int i = 0; i < numClusters; i++)
@@ -77,6 +91,10 @@ vector<GrassCluster>& GrassPatch::getClusters()
 }
 
 
+/*!
+ * Drawing -- just call draw() on each
+ * cluster in the patch.
+ */
 void GrassPatch::draw(int texID)
 {
     for (vector<GrassCluster>::iterator it = m_clusters.begin(); it != m_clusters.end(); ++it)
@@ -87,5 +105,5 @@ void GrassPatch::draw(int texID)
 
 void GrassPatch::clearPatch()
 {
-        m_clusters.clear();
+    m_clusters.clear();
 }

@@ -32,6 +32,15 @@
 #define CLUSTERS_PER_PATCH 4
 #define PATCH_SIZE 2
 
+/**
+
+ @struct Constants
+
+ @brief Holds parameters
+ that might change during
+ execution.
+
+**/
 struct Constants
 {
     void initializeConstants();

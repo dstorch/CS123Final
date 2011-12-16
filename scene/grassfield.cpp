@@ -1,3 +1,11 @@
+/*!
+   @file   grassfield.cpp
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #include "grassfield.h"
 #include "vector"
 #include <queue>
@@ -13,6 +21,7 @@ GrassField::GrassField()
 {
 }
 
+//! destructor
 GrassField::~GrassField()
 {
     for (vector<GrassPatch*>::iterator it = m_patches.begin(); it != m_patches.end(); ++it)
@@ -21,14 +30,27 @@ GrassField::~GrassField()
     }
 }
 
+/*!
+ * Delete all clusters in preparation for
+ * producing a new field of grass.
+ */
 void GrassField::clearField()
 {
     for (vector<GrassPatch*>::iterator it = m_patches.begin(); it != m_patches.end(); ++it)
     {
         (*it)->clearPatch();
+        delete (*it);
     }
+
+    m_patches.clear();
 }
 
+/*!
+ * Regenerate the field of grass
+ * after incrementing the density.
+ *
+ * Don't let density go above 6.
+ */
 void GrassField::denser()
 {
     if (constants.clustersPerPatch < 6)
@@ -39,6 +61,12 @@ void GrassField::denser()
     }
 }
 
+/*!
+ * Regenerate the field of grass
+ * after decrementing the density.
+ *
+ * Don't let density drop below 1.
+ */
 void GrassField::lessDense()
 {
     if (constants.clustersPerPatch > 1)
@@ -49,6 +77,10 @@ void GrassField::lessDense()
     }
 }
 
+/*!
+ * Generate the whole field, with randomized
+ * positions and cluster heights.
+ */
 void GrassField::makeField()
 {
     srand((unsigned)time(0));
@@ -64,12 +96,14 @@ void GrassField::makeField()
     }
 }
 
+/*!
+ * comparator for sorting clusters back to front
+ * with respect to the camera
+ */
 bool clusterDistanceComp(GrassCluster &c1, GrassCluster &c2)
 {
     return c1.getDistance() > c2.getDistance();
 }
-
-
 
 void GrassField::draw(int texID, Vector3 eye)
 {

@@ -16,6 +16,15 @@
 
 typedef Vector2 GridPoint;
 
+/**
+
+ @class HeightMap
+
+ @brief Generates "rolling hills"
+ height map. Also provides an interface
+ for accessing these height values.
+
+**/
 class HeightMap
 {
 public:

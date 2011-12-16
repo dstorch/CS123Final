@@ -1,3 +1,11 @@
+/*!
+   @file   grasscluster.cpp
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #include "grasscluster.h"
 
 GrassCluster::GrassCluster(Vector3 position)
@@ -15,6 +23,15 @@ void GrassCluster::scaleBy(Vector3 scale)
     m_scale = scale;
 }
 
+/*!
+ * Rendering routine for a cluster.
+ * Fixed object-space coordinates are
+ * passed for every cluster, under the appropriate
+ * transformations.
+ *
+ * @param texID - the texture ID, binds the
+ *  texture for the grass clusters
+ */
 void GrassCluster::draw(int texID)
 {
 
@@ -122,6 +139,11 @@ float GrassCluster::getDistance()
     return m_distance;
 }
 
+/*!
+ * Set the distance of the cluster from the camera.
+ *
+ * @param eye - camera eye point
+ */
 void GrassCluster::setDistance(Vector3 eye)
 {
     Vector3 toEye = m_position - eye;

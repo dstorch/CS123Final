@@ -1,3 +1,11 @@
+/*!
+   @file   camera.cpp
+   @author dstorch@cs.brown.edu
+   @author sl90@cs.brown.edu
+   @author zwilson@cs.brown.edu
+   @date   December 2011
+*/
+
 #include "camera.h"
 #include <qgl.h>
 
@@ -12,6 +20,12 @@ void OrbitCamera::mouseMove(const Vector2 &delta)
     phi = max(0.01f - M_PI / 2, min(M_PI / 2 - 0.01f, phi));
 }
 
+/*!
+ * Move the camera along the look vector.
+ *
+ * @param amount - the distance to move by,
+ *  in world space
+ */
 void OrbitCamera::moveForward(float amount)
 {
     Vector3 dir(-Vector3::fromAngles(theta, phi));
@@ -20,6 +34,13 @@ void OrbitCamera::moveForward(float amount)
     if (inBoundingBox(newCenter)) eye = newCenter;
 }
 
+/*!
+ * Move to the right without changing the look
+ * direction or the up vector.
+ *
+ * @param amount - the distance to move by,
+ *  in world space
+ */
 void OrbitCamera::moveRight(float amount)
 {
     Vector3 dir(-Vector3::fromAngles(theta, phi));
@@ -32,6 +53,12 @@ void OrbitCamera::moveRight(float amount)
     if (inBoundingBox(newCenter)) eye = newCenter;
 }
 
+/*!
+ * Test whether the camera eye position is within
+ * the allowed bounding box.
+ *
+ * @return true if in bounding box, false otherwise
+ */
 bool OrbitCamera::inBoundingBox(Vector3 point)
 {
     bool testx = point.x < 50.0 && point.x > -50.0;
@@ -46,6 +73,11 @@ bool OrbitCamera::inBoundingBox(Vector3 point)
     return testx && testy && testz;
 }
 
+/*!
+ * After generating a new terrain map, this method
+ * should be called. Makes sure that the camera does
+ * not get trapped below the terrain.
+ */
 void OrbitCamera::keepAboveTerrain()
 {
     int xcoord = max(0, min(heightmap->height() - 1, eye.x + (TERRAIN_HEIGHT / 2.0)));

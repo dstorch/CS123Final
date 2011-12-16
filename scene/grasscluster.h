@@ -13,10 +13,16 @@
 #include <math.h>
 #include <vector.h>
 
-// TODO
-#include <iostream>
-using namespace std;
+/**
 
+ @class GrassCluster
+
+ @brief A single grass cluster, made up of
+ six texture mapped quads. Stores it's position,
+ scale factors, and how far the cluster is from
+ the current eye point of the camera.
+
+**/
 class GrassCluster
 {
 public:
@@ -33,8 +39,8 @@ public:
 private:
     Vector3 m_position;
     Vector3 m_scale;
-    Vector3 m_up;
 
+    // distance from camera
     float m_distance;
 };
 

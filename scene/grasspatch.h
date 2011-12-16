@@ -12,7 +12,19 @@
 #include "grasscluster.h"
 #include "HeightMap.h"
 #include <vector>
+using namespace std;
 
+/**
+
+ @class GrassPatch
+
+ @brief A GrassPatch stores a fixed number
+ of GrassCluster objects, each positioned on
+ a certain grid square of the height map.
+ The clusters within the patch are positioned
+ randomly.
+
+**/
 class GrassPatch
 {
 public:

@@ -26,7 +26,14 @@
 class QGLShaderProgram;
 class QGLFramebufferObject;
 
+/**
 
+ @class GLWidget
+
+ @brief Core graphics implementation
+ class. All rendering code is here.
+
+**/
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -61,8 +68,7 @@ protected:
     void paintText();
     void renderBlur(int width, int height);
 
-    // used for wind effect click interaction
-    QVector4D windowToFilm(int x, int y, int width, int height);
+    // used for wind burst click interaction
     void spawnWind(int xclick, int yclick);
 
 private:
@@ -82,7 +88,6 @@ private:
 
     GLuint m_grassTex; // grass texture ID
     GLuint m_soilTex; // soil texture ID
-    GLuint m_depthTex;
 
     // wind effect
     float m_timeCounter;
