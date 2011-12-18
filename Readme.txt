@@ -12,6 +12,7 @@
 #   1. Controls
 #   2. Features
 #   3. Implementation details
+#   4. Building and running
 #
 ############################################
 
@@ -109,4 +110,10 @@ Scene parameters:
   product means that the strongest perturbations
   are those which align directly with the wind
   direction. 
+
+############################################
+4. Building and running
+############################################
+
+QtCreator should be used for generating the Makefile.
 
